@@ -34,11 +34,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- <dependency> <groupId>org.jboss.bom.eap</groupId> <artifactId>jboss-javaee-6.0-with-hibernate</artifactId> 
-				<version>1.0.7.Final</version> <type>pom</type> <scope>import</scope> </dependency> 
-				<dependency> <groupId>org.jboss.bom.wfk</groupId> <artifactId>jboss-javaee-6.0-with-tools</artifactId> 
-				<version>${version.jboss.bom.wfk}</version> <type>pom</type> <scope>import</scope> 
-				</dependency> -->
 		</dependencies>
 	</dependencyManagement>
 	<repositories>

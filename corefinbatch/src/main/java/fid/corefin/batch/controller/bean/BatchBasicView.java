@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -40,7 +41,7 @@ public class BatchBasicView implements Serializable {
 			if (batchName != null && batchName.length() > 0) {
 				TreeNode b = new DefaultTreeNode(batchName, all);
 				
-				Parameter param = paramRepo.getParameterById(1);
+				//Parameter param = paramRepo.getParameterById(1);
 //				List<String> types = dynamicOptions.getTypesToBrand(brand);
 //				for (String type : types) {
 //					if (type != null && type.length() > 0) {

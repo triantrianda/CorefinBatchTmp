@@ -1,6 +1,5 @@
 package fid.corefin.batch.data;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 

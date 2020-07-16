@@ -6,35 +6,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
-
 import org.apache.logging.log4j.Logger;
 
 @Singleton
 public abstract class BaseMySQLEntityRepository<T> {
 	
-	@PersistenceUnit(unitName = "finWAStagingDS")
-	protected EntityManagerFactory entityManagerFactory;
+//	@PersistenceUnit(unitName = "finWAStagingDS")
+//	protected EntityManagerFactory entityManagerFactory;
 	
-	@PersistenceUnit(unitName = "finWAStagingDS")
-	protected EntityManager entityManager;
+//	@PersistenceContext(unitName = "finWAStagingDS")
+//	protected EntityManager entityManager;
+	
+//	@PersistenceContext(unitName = "finWAStagingDS", type = PersistenceContextType.TRANSACTION)
+//	private EntityManager entityManager;
+	
+//	@Inject
+//	protected Logger logger;
 	
 	@Inject
-	protected Logger logger;
+	protected EntityManager entityManager;
 	
 	private Class<T> entityClass;
 	

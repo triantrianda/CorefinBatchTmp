@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Model;
+import javax.enterprise.inject.Produces;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.TreeNode;
@@ -21,12 +23,14 @@ import fid.corefin.batch.model.NotifBatchMColl;
 import fid.corefin.batch.model.NotifBatchMPos;
 import fid.corefin.batch.model.SynchBatch;
 import fid.corefin.batch.model.entity.Parameter;
+import fid.corefin.batch.service.BatchMonitoringService;
+import fid.corefin.batch.util.Repository;
 
 @ManagedBean
 @SessionScoped
 public class BatchViewHandler {
-	
-	ParameterRepository param;
+	@Inject
+	private BatchMonitoringService batchMonitoringService;
 
 	private List<GeneralBatchInfo> generalBatchInfoList = new ArrayList<GeneralBatchInfo>();
 
@@ -101,10 +105,10 @@ public class BatchViewHandler {
 		return batchOption;
 	}
 
+
 	public void onNodeSelect(NodeSelectEvent event) {
 		
-		Parameter param2 = param.getParameterById(2);
-		String value = param2.getName();
+		String value = batchMonitoringService.getParameterValue(1);
 
 		showGeneral = false;
 		showJournal = false;
