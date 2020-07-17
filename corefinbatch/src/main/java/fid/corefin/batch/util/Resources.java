@@ -1,6 +1,5 @@
 package fid.corefin.batch.util;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.persistence.EntityManager;
@@ -11,7 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Resources {
-	@PersistenceContext(unitName = "finWAStagingDS")
+	
+	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Produces
@@ -19,7 +19,7 @@ public class Resources {
 	protected EntityManager createEntityManager() {
 		return this.entityManager;
 	}
-
+	
 	@Produces
 	public Logger produceLog(InjectionPoint injectionPoint) {
 		return LogManager.getLogger(injectionPoint.getMember().getDeclaringClass().getName());

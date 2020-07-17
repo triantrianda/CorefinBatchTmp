@@ -6,15 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,21 +21,12 @@ import org.apache.logging.log4j.Logger;
 
 @Singleton
 public abstract class BaseMySQLEntityRepository<T> {
-	
-//	@PersistenceUnit(unitName = "finWAStagingDS")
-//	protected EntityManagerFactory entityManagerFactory;
-	
-//	@PersistenceContext(unitName = "finWAStagingDS")
-//	protected EntityManager entityManager;
-	
-//	@PersistenceContext(unitName = "finWAStagingDS", type = PersistenceContextType.TRANSACTION)
-//	private EntityManager entityManager;
-	
-//	@Inject
-//	protected Logger logger;
+		
+	@PersistenceContext(unitName = "finWAStagingDS")
+	protected EntityManager entityManager;
 	
 	@Inject
-	protected EntityManager entityManager;
+	protected Logger logger;
 	
 	private Class<T> entityClass;
 	
@@ -368,30 +355,30 @@ public abstract class BaseMySQLEntityRepository<T> {
 //
 //		return predicates;
 //	}
-//	
-//
-//	@SuppressWarnings({ "rawtypes" })
-//	private Predicate addParamater( CriteriaBuilder criteriaBuilder,  Expression<?> key, Object value){
-//		if( value!=null && (value.getClass().isArray() || value instanceof List)){
-//			if(value instanceof List && ((List) value).size()>0){
-//				return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));
-//			}
-//			if(value.getClass().isArray() && ((ArrayList)value).size()>0 ){
-//				return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));				
-//			}
-//		}else{
-//			return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));
-//		}
-//		return null;
-//	}
-//	
-//	private Predicate setParamater(CriteriaBuilder criteriaBuilder, Expression<?> key, Object value){
-//		if( value!=null && (value.getClass().isArray() || value instanceof List)){
-//			return key.in(value);
-//		}else{
-//			return criteriaBuilder.equal(key, value);
-//		}
-//	}
+	
+
+	@SuppressWarnings({ "rawtypes" })
+	private Predicate addParamater( CriteriaBuilder criteriaBuilder,  Expression<?> key, Object value){
+		if( value!=null && (value.getClass().isArray() || value instanceof List)){
+			if(value instanceof List && ((List) value).size()>0){
+				return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));
+			}
+			if(value.getClass().isArray() && ((ArrayList)value).size()>0 ){
+				return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));				
+			}
+		}else{
+			return (criteriaBuilder.and(setParamater(criteriaBuilder, key, value)));
+		}
+		return null;
+	}
+	
+	private Predicate setParamater(CriteriaBuilder criteriaBuilder, Expression<?> key, Object value){
+		if( value!=null && (value.getClass().isArray() || value instanceof List)){
+			return key.in(value);
+		}else{
+			return criteriaBuilder.equal(key, value);
+		}
+	}
 
 
 }

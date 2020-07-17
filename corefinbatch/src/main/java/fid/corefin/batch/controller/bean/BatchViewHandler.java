@@ -108,7 +108,7 @@ public class BatchViewHandler {
 
 	public void onNodeSelect(NodeSelectEvent event) {
 		
-		String value = batchMonitoringService.getParameterValue(1);
+		//String value = batchMonitoringService.getParameterValue(1);
 
 		showGeneral = false;
 		showJournal = false;
