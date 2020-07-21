@@ -4,33 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Model;
-import javax.enterprise.inject.Produces;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.TreeNode;
 
-import fid.corefin.batch.data.ParameterRepository;
 import fid.corefin.batch.model.DMBatch;
 import fid.corefin.batch.model.GeneralBatchInfo;
 import fid.corefin.batch.model.JournalBatch;
 import fid.corefin.batch.model.NotifBatchMColl;
 import fid.corefin.batch.model.NotifBatchMPos;
 import fid.corefin.batch.model.SynchBatch;
-import fid.corefin.batch.model.entity.Parameter;
-import fid.corefin.batch.service.BatchMonitoringService;
-import fid.corefin.batch.util.Repository;
+import fid.corefin.batch.model.entity.WaOTP;
+import fid.corefin.batch.model.entity.WaPooling;
 
 @ManagedBean
 @SessionScoped
 public class BatchViewHandler {
-	@Inject
-	private BatchMonitoringService batchMonitoringService;
 
 	private List<GeneralBatchInfo> generalBatchInfoList = new ArrayList<GeneralBatchInfo>();
 
@@ -43,9 +34,19 @@ public class BatchViewHandler {
 	private List<NotifBatchMPos> mPosNotifBatchList = new ArrayList<NotifBatchMPos>();
 	
 	private List<NotifBatchMColl> mCollNotifBatchList = new ArrayList<NotifBatchMColl>();
+	
+	private List<WaPooling> messagePoolBatchList = new ArrayList<WaPooling>();
+	
+	private List<WaOTP> messageOtpBatchList = new ArrayList<WaOTP>();
 
 	private TreeNode selectedNode;
 
+	private boolean showMessagePooling;
+	
+	private boolean showMessageSendTemplate;
+	
+	private boolean showMessageOTP;
+	
 	private boolean showGeneral;
 
 	private boolean showJournal;
@@ -67,6 +68,18 @@ public class BatchViewHandler {
 
 	public void setSelectedNode(TreeNode selectedNode) {
 		this.selectedNode = selectedNode;
+	}
+	
+	public boolean isShowMessagePool() {
+		return showMessagePooling;
+	}
+	
+	public boolean isShowMessageSendTemplate() {
+		return showMessageSendTemplate;
+	}
+	
+	public boolean isShowMessageOTP() {
+		return showMessageOTP;
 	}
 
 	public boolean isShowJournal() {
@@ -106,10 +119,10 @@ public class BatchViewHandler {
 	}
 
 
-	public void onNodeSelect(NodeSelectEvent event) {
-		
-		//String value = batchMonitoringService.getParameterValue(1);
-
+	public void onNodeSelect(NodeSelectEvent event) throws Exception {
+		showMessagePooling = false;
+		showMessageSendTemplate = false;
+		showMessageOTP = false;
 		showGeneral = false;
 		showJournal = false;
 		showMDBatch = false;
@@ -126,6 +139,17 @@ public class BatchViewHandler {
 			System.out.println(node);
 
 			switch (node) {
+			case "WA Pooling":
+				showMessagePooling = true;
+				messagePoolBatchList = batchOption.getMessagePoolBatch();
+				break;
+			case "WA Send Template":
+				showMessageSendTemplate = true;
+				break;
+			case "WA OTP":
+				showMessageOTP = true;
+				messageOtpBatchList = batchOption.getMessageOtpBatch();
+				break;
 			case "Journal Queue":
 				showJournal = true;
 				journalQueueList = batchOption.getJournalBatchInfoList();
@@ -186,4 +210,13 @@ public class BatchViewHandler {
 	public List<SynchBatch> getSynchBatchList() {
 		return synchBatchList;
 	}
+	
+	public List<WaPooling> getMessagePoolBatchList() {
+		return messagePoolBatchList;
+	}
+	
+	public List<WaOTP> getMessageOtpBatchList() {
+		return messageOtpBatchList;
+	}
+	
 }

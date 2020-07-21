@@ -1,12 +1,14 @@
 package fid.corefin.batch.controller.bean;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.inject.Inject;
 
 import fid.corefin.batch.model.DMBatch;
 import fid.corefin.batch.model.GeneralBatchInfo;
@@ -14,6 +16,10 @@ import fid.corefin.batch.model.JournalBatch;
 import fid.corefin.batch.model.NotifBatchMColl;
 import fid.corefin.batch.model.NotifBatchMPos;
 import fid.corefin.batch.model.SynchBatch;
+import fid.corefin.batch.model.entity.WaOTP;
+import fid.corefin.batch.model.entity.WaPooling;
+import fid.corefin.batch.model.entity.WaSendTemplate;
+import fid.corefin.batch.service.MessagePoolingMonitoringService;
 
 @ManagedBean
 @SessionScoped
@@ -27,9 +33,21 @@ public class BatchOption implements Serializable {
 	private List<GeneralBatchInfo> generalBatchInfoList = new ArrayList<GeneralBatchInfo>();
 
 	private List<String> batchNames = new ArrayList<String>();
+	
+	@Inject
+	MessagePoolingMonitoringService messagePoolService;
 
 	public BatchOption() {
 
+		generalBatchInfoList.add(new GeneralBatchInfo("WA Message Pooling", "Daily", "WAPOOL"));
+		batchNames.add("WA Pooling");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("WA Send Template", "Daily", "WASEND"));
+		batchNames.add("WA Send Template");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("WA OTP", "Daily", "WAOTP"));
+		batchNames.add("WA OTP");
+		
 		generalBatchInfoList.add(new GeneralBatchInfo("Monthly", "Monthly", "M"));
 		batchNames.add("Monthly");
 
@@ -192,4 +210,47 @@ public class BatchOption implements Serializable {
 
 		return synchBatchInfoList;
 	}
+	
+	public List<WaPooling> getMessagePoolBatch() throws Exception {
+		List<WaPooling> messagePoolBatchList = new ArrayList<WaPooling>();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			//for testing
+			String tgl = "2020-04-04";
+			//for live
+			//String tgl = sdf.format(new Date());
+			Date date = sdf.parse(tgl);
+			messagePoolBatchList = messagePoolService.getMessagePoolBatchList(date);	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return messagePoolBatchList;
+	}
+	
+	public List<WaSendTemplate> getMessageWaSendTemplate() throws Exception {
+		List<WaSendTemplate> messageWaSendTemplate = new ArrayList<WaSendTemplate>();
+		try {
+			messageWaSendTemplate.add(new WaSendTemplate());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return messageWaSendTemplate;
+	}
+	
+	public List<WaOTP> getMessageOtpBatch(){
+		List<WaOTP> waOtpList = new ArrayList<WaOTP>();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			//for testing
+			String tgl = "2020-06-07";
+			//for live
+			//String tgl = sdf.format(new Date());
+			Date date = sdf.parse(tgl);
+			waOtpList = messagePoolService.getMessageOtpBatchList(date);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return waOtpList;
+	}
+	
 }

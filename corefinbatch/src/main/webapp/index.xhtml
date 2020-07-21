@@ -67,6 +67,77 @@ table {
 							actionListener="#{batchViewHandler.refreshBatchInfo('gbId')}"
 							update="gbId"></prime:commandButton>
 					</b:panel>
+					<!-- WA MESSAGE POOL -->
+					<b:panel rendered="#{batchViewHandler.showMessagePool}">
+						<prime:dataTable value="#{batchViewHandler.messagePoolBatchList}"
+							var="waPool" id="waPoolId" rowKey="#{waPool.poolDate}" paginator="true"
+							rows="10">
+							<prime:column id="waPoolDate" headerText="Date">
+								<h:outputText value="#{waPool.date}">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="waPoolPlanData" headerText="Total Plan Pool Data">#{waPool.totalPlanPool}</prime:column>
+							<prime:column id="waPoolActualData" headerText="Total Actual Pool Data">#{waPool.totalActualPool}</prime:column>
+							<prime:column id="waPoolDevData" headerText="Deviation Pool Data">#{waPool.deviationData}</prime:column>
+						</prime:dataTable>
+						<prime:commandButton value="Refresh"
+							actionListener="#{batchViewHandler.refreshBatchInfo('waPoolId')}"
+							update="waPoolId"></prime:commandButton>
+					</b:panel>
+					<!-- WA MESSAGE SEND TEMPLATE -->
+					<b:panel rendered="#{batchViewHandler.showMessageSendTemplate}">
+						<prime:dataTable value="#{batchViewHandler.journalQueueList}"
+							var="journal" id="waSendTemplateId" rowKey="#{journal.id}" paginator="true"
+							rows="10">
+							<prime:columnGroup type="header">
+								<prime:row>
+									<prime:column rowspan="2" headerText="Date"/>
+									<prime:column rowspan="2" headerText="Total Plan Send Template Data"/>
+									<prime:column rowspan="2" headerText="Total Actual Send Template Data"/>
+									<prime:column colspan="3" headerText="Status Actual Send Template"/>
+									<prime:column rowspan="2" headerText="Deviation Pool Data"/>
+								</prime:row>
+								<prime:row>
+									<prime:column headerText="Pending Enroute"/>
+									<prime:column headerText="Reject"/>
+									<prime:column headerText="Error"/>
+								</prime:row>
+							</prime:columnGroup>
+							<prime:column id="waSendTemplateDate">
+								<h:outputText value="20-04-2020">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="waSendTemplatePlanData">200</prime:column>
+							<prime:column id="waSendTemplateActualData">140</prime:column>
+							<prime:column id="waPendingEnroute">20</prime:column>
+							<prime:column id="waRreject">20</prime:column>
+							<prime:column id="waError">20</prime:column>
+							<prime:column id="waSendTemplateDevData">60</prime:column>
+						</prime:dataTable>
+						<prime:commandButton value="Refresh"
+							actionListener="#{batchViewHandler.refreshBatchInfo('jId')}"
+							update="jId"></prime:commandButton>
+					</b:panel>
+					<!-- WA OTP -->
+					<b:panel rendered="#{batchViewHandler.showMessageOTP}">
+						<prime:dataTable value="#{batchViewHandler.messageOtpBatchList}"
+							var="waOtp" id="waOtpId" rowKey="#{journal.id}" paginator="true"
+							rows="10">
+							<prime:column id="waOtpDate" headerText="Date">
+								<h:outputText value="#{waOtp.date}">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="waOtpSuccess" headerText="OTP Success">#{waOtp.otpSuccess}</prime:column>
+							<prime:column id="waOtpFailed" headerText="OTP Failed">#{waOtp.otpFailed}</prime:column>
+							<prime:column id="waOtpObsolete" headerText="OTP Obsolete">#{waOtp.otpObsolete}</prime:column>
+						</prime:dataTable>
+						<prime:commandButton value="Refresh"
+							actionListener="#{batchViewHandler.refreshBatchInfo('waOtpId')}"
+							update="waOtpId"></prime:commandButton>
+					</b:panel>
 					<b:panel rendered="#{batchViewHandler.showJournal}">
 						<prime:dataTable value="#{batchViewHandler.journalQueueList}"
 							var="journal" id="jId" rowKey="#{journal.id}" paginator="true"
