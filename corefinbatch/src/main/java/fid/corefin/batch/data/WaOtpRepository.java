@@ -1,7 +1,6 @@
 package fid.corefin.batch.data;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fid.corefin.batch.model.entity.SummaryProcess;
 import fid.corefin.batch.model.entity.WaOTP;
 import fid.corefin.batch.util.Repository;
 

@@ -6,21 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fid.corefin.batch.model.entity.WaPooling;
+import fid.corefin.batch.model.entity.WaSendTemplate;
 import fid.corefin.batch.util.Repository;
 
 @Repository
-public class WaPoolRepository extends BaseMySQLEntityRepository2<WaPooling> {
+public class WaSendTemplateRepository extends BaseMySQLEntityRepository2<WaSendTemplate> {
 	@Override
 	protected Predicate[] extractPredicatesSingle(Map<String, Object> params, CriteriaBuilder criteriaBuilder,
-			Root<WaPooling> root) throws Exception {
+			Root<WaSendTemplate> root) throws Exception {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -33,15 +32,15 @@ public class WaPoolRepository extends BaseMySQLEntityRepository2<WaPooling> {
 	}
 
 	@Override
-	protected void addCriteriaQueryOrderBySingleInstance(CriteriaQuery<WaPooling> criteriaQuery,
-			CriteriaBuilder criteriaBuilder, Root<WaPooling> root, Map<String, Object> params) throws Exception {
+	protected void addCriteriaQueryOrderBySingleInstance(CriteriaQuery<WaSendTemplate> criteriaQuery,
+			CriteriaBuilder criteriaBuilder, Root<WaSendTemplate> root, Map<String, Object> params) throws Exception {
 		criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
 
 	}
 
 	@Override
 	protected Predicate[] extractPredicates(Map<String, Object> params, CriteriaBuilder criteriaBuilder,
-			Root<WaPooling> root) throws Exception {
+			Root<WaSendTemplate> root) throws Exception {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -52,50 +51,50 @@ public class WaPoolRepository extends BaseMySQLEntityRepository2<WaPooling> {
 		return predicates.toArray(new Predicate[] {});
 	}
 
-	public void saveFlush(WaPooling waPooling) throws Exception {
+	public void saveFlush(WaSendTemplate waSendTemplate) throws Exception {
 		try {
-			entityManager.persist(waPooling);
+			entityManager.persist(waSendTemplate);
 			entityManager.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public WaPooling getByDate(Date date) {
+	public List<WaSendTemplate> getAllWaSendTemplateList() {
 		try {
 			EntityManager em = getEntityManager();
-			TypedQuery<WaPooling> query = em.createQuery(
-					"SELECT p FROM WaPooling p WHERE p.date = ?1", WaPooling.class);
-			query.setParameter(1, date);
-			return query.getSingleResult();
-		} catch (NoResultException  nre) {
-			// TODO: handle exception
+			TypedQuery<WaSendTemplate> query = em.createQuery(
+					"SELECT p FROM WaSendTemplate p ORDER BY p.date desc",WaSendTemplate.class);
+			return query.getResultList();	
+		} catch (Exception e) {
+			//e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public List<WaPooling> getByDateAndTotalActualData(Date date) {
+	public List<WaSendTemplate> getListWaSendToUpdateByDate(Date date){
 		try {
 			EntityManager em = getEntityManager();
-			TypedQuery<WaPooling> query = em.createQuery(
-					"SELECT p FROM WaPooling p WHERE p.date < ?1 AND p.totalActualPool = ?2", WaPooling.class);
+			TypedQuery<WaSendTemplate> query = em.createQuery(
+					"SELECT p FROM WaSendTemplate p WHERE p.date < ?1 AND p.totalActualSendTemplate = ?2",WaSendTemplate.class);
 			query.setParameter(1, date);
 			query.setParameter(2, 0);
-			return query.getResultList();
-		} catch (NoResultException  nre) {
-			nre.printStackTrace();
+			return query.getResultList();	
+		} catch (Exception e) {
+			//e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public List<WaPooling> getListWaPooling(){
+	public WaSendTemplate getByDate(Date date) {
 		try {
 			EntityManager em = getEntityManager();
-			TypedQuery<WaPooling> query = em.createQuery(
-					"SELECT p FROM WaPooling p ORDER BY p.date desc", WaPooling.class);
-			return query.getResultList();
-		} catch (NoResultException  nre) {
-			nre.printStackTrace();
+			TypedQuery<WaSendTemplate> query = em.createQuery(
+					"SELECT p FROM WaSendTemplate p WHERE p.date = ?1",WaSendTemplate.class);
+			query.setParameter(1, date);
+			return query.getSingleResult();	
+		} catch (Exception e) {
+			//e.printStackTrace();
 			return null;
 		}
 	}

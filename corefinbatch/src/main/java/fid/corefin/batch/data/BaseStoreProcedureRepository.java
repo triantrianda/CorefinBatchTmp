@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class BaseStoreProcedureRepository<T> {
 
 	//@Inject
-	@PersistenceContext(unitName = "finCoreDS")
+	@PersistenceContext(unitName = "corefinBatchDS")
 	protected EntityManager entityManager;
 
 	@Inject

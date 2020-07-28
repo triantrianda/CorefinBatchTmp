@@ -1,12 +1,18 @@
 package fid.corefin.batch.controller.bean;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.TreeNode;
 
@@ -16,16 +22,29 @@ import fid.corefin.batch.model.JournalBatch;
 import fid.corefin.batch.model.NotifBatchMColl;
 import fid.corefin.batch.model.NotifBatchMPos;
 import fid.corefin.batch.model.SynchBatch;
+
+import fid.corefin.batch.model.entity.GlJournalQueue;
+import fid.corefin.batch.model.entity.GlJournalQueueArchive;
+import fid.corefin.batch.service.BatchMonitoringService;
 import fid.corefin.batch.model.entity.WaOTP;
 import fid.corefin.batch.model.entity.WaPooling;
+import fid.corefin.batch.model.entity.WaSendTemplate;
 
 @ManagedBean
 @SessionScoped
 public class BatchViewHandler {
+	@Inject
+	private BatchMonitoringService batchMonitoringService;
 
 	private List<GeneralBatchInfo> generalBatchInfoList = new ArrayList<GeneralBatchInfo>();
 
 	private List<JournalBatch> journalQueueList = new ArrayList<JournalBatch>();
+	
+	private List<GlJournalQueue> glJournalQueueList = new ArrayList<GlJournalQueue>();
+	
+	private List<GlJournalQueueArchive> glJournalQueueArchiveList = new ArrayList<GlJournalQueueArchive>();
+	
+	private GlJournalQueue glJournalQueue = new GlJournalQueue();
 
 	private List<DMBatch> dmBatchList = new ArrayList<DMBatch>();
 	
@@ -38,7 +57,9 @@ public class BatchViewHandler {
 	private List<WaPooling> messagePoolBatchList = new ArrayList<WaPooling>();
 	
 	private List<WaOTP> messageOtpBatchList = new ArrayList<WaOTP>();
-
+	
+	private List<WaSendTemplate> messageSendTemplateBatchList = new ArrayList<WaSendTemplate>();
+	
 	private TreeNode selectedNode;
 
 	private boolean showMessagePooling;
@@ -50,6 +71,8 @@ public class BatchViewHandler {
 	private boolean showGeneral;
 
 	private boolean showJournal;
+	
+	private boolean showJournalArchive;
 
 	private boolean showMDBatch;
 
@@ -58,6 +81,15 @@ public class BatchViewHandler {
 	private boolean showNotifMColl;
 
 	private boolean showSynch;
+	
+	private Date date1;
+    private Date date2;
+    private Date date1JA;
+    private Date date2JA;
+    private String moduleJ; 
+    private String moduleJA;
+    
+    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	@ManagedProperty("#{batchOption}")
 	private BatchOption batchOption;
@@ -84,6 +116,10 @@ public class BatchViewHandler {
 
 	public boolean isShowJournal() {
 		return showJournal;
+	}
+
+	public boolean isShowJournalArchive() {
+		return showJournalArchive;
 	}
 
 	public boolean isShowMDBatch() {
@@ -118,17 +154,36 @@ public class BatchViewHandler {
 		return batchOption;
 	}
 
-
+	@SuppressWarnings("unused")
 	public void onNodeSelect(NodeSelectEvent event) throws Exception {
 		showMessagePooling = false;
 		showMessageSendTemplate = false;
 		showMessageOTP = false;
 		showGeneral = false;
 		showJournal = false;
+		showJournalArchive = false;
 		showMDBatch = false;
 		showNotifMColl = false;
 		showNotifMPos = false;
 		showSynch = false;
+		date1 = null;
+		date2 = null;
+		date1JA = null;
+		date2JA = null;
+		moduleJ = null;
+		moduleJA = null;
+		
+		/*
+		 * try { closeAfter = HibernateHelper.beginTx(); Session session =
+		 * HibernateHelper.getSession();
+		 * 
+		 * List<GlJournalQueue> listOfUserAppr =
+		 * session.createCriteria(GlJournalQueue.class).list();
+		 * 
+		 * } catch (Exception e) { HibernateHelper.rollbackTx(closeAfter); }
+		 */
+		
+		Date date = new Date();
 
 		TreeNode treeNode = event.getTreeNode();
 		TreeNode parent = treeNode.getParent();
@@ -145,6 +200,7 @@ public class BatchViewHandler {
 				break;
 			case "WA Send Template":
 				showMessageSendTemplate = true;
+				messageSendTemplateBatchList = batchOption.getMessageWaSendTemplate();
 				break;
 			case "WA OTP":
 				showMessageOTP = true;
@@ -152,7 +208,12 @@ public class BatchViewHandler {
 				break;
 			case "Journal Queue":
 				showJournal = true;
-				journalQueueList = batchOption.getJournalBatchInfoList();
+				//journalQueueList = batchOption.getJournalBatchInfoList();
+				glJournalQueueList = batchMonitoringService.getGlJournalQueue(dateFormat.format(date));
+				break;
+			case "Journal Queue Archive":
+				showJournalArchive = true;
+				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchive(dateFormat.format(date));
 				break;
 			case "Daily":
 				showMDBatch = true;
@@ -177,7 +238,33 @@ public class BatchViewHandler {
 			default:
 				break;
 			}
-
+		}
+	}
+	
+	public void buttonAction(ActionEvent ae) {
+		try {
+			if (moduleJ == null) {
+				glJournalQueueList = batchMonitoringService.getGlJournalQueueFromTo(dateFormat.format(date1), dateFormat.format(date2));
+			}
+			else {
+				glJournalQueueList = batchMonitoringService.getGlJournalQueueFromToWithModule(dateFormat.format(date1), dateFormat.format(date2), moduleJ);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void buttonActionJA(ActionEvent ae) {
+		try {
+			if (moduleJA == null) {
+				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromTo(dateFormat.format(date1JA), dateFormat.format(date2JA));
+			} else {
+				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromToWithModule(dateFormat.format(date1JA), dateFormat.format(date2JA), moduleJA);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -187,12 +274,41 @@ public class BatchViewHandler {
 		generalBatchInfoList = batchOption.getGeneralBatchInfoList();
 	}
 
-	public void refreshBatchInfo(String id) {
+	public void refreshBatchInfo(String id) throws Exception {
+		switch(id) {
+		case "refWaPool":
+			messagePoolBatchList = batchOption.getMessagePoolBatch();
+			break;
+		case "refWaSendTemplate":
+			messageSendTemplateBatchList = batchOption.getMessageWaSendTemplate();
+			break;
+		case "refWaOtp":
+			messageOtpBatchList = batchOption.getMessageOtpBatch();
+			break;
+		default:
+			break;
+		}
 		System.out.println("REFRESH ID : " + id);
 	}
 
 	public List<JournalBatch> getJournalQueueList() {
 		return journalQueueList;
+	}
+	
+	public List<GlJournalQueue> getGlJournalQueueList() {
+		return glJournalQueueList;
+	}
+
+	public List<GlJournalQueueArchive> getGlJournalQueueArchiveList() {
+		return glJournalQueueArchiveList;
+	}
+
+	public GlJournalQueue getGlJournalQueue() {
+		return glJournalQueue;
+	}
+
+	public void setGlJournalQueue(GlJournalQueue glJournalQueue) {
+		this.glJournalQueue = glJournalQueue;
 	}
 
 	public List<DMBatch> getDmBatchList() {
@@ -210,6 +326,54 @@ public class BatchViewHandler {
 	public List<SynchBatch> getSynchBatchList() {
 		return synchBatchList;
 	}
+
+	public Date getDate1() {
+		return date1;
+	}
+
+	public void setDate1(Date date1) {
+		this.date1 = date1;
+	}
+
+	public Date getDate2() {
+		return date2;
+	}
+
+	public void setDate2(Date date2) {
+		this.date2 = date2;
+	}
+
+	public Date getDate1JA() {
+		return date1JA;
+	}
+
+	public void setDate1JA(Date date1ja) {
+		date1JA = date1ja;
+	}
+
+	public Date getDate2JA() {
+		return date2JA;
+	}
+
+	public void setDate2JA(Date date2ja) {
+		date2JA = date2ja;
+	}
+
+	public String getModuleJ() {
+		return moduleJ;
+	}
+
+	public void setModuleJ(String moduleJ) {
+		this.moduleJ = moduleJ;
+	}
+
+	public String getModuleJA() {
+		return moduleJA;
+	}
+
+	public void setModuleJA(String moduleJA) {
+		this.moduleJA = moduleJA;
+	}
 	
 	public List<WaPooling> getMessagePoolBatchList() {
 		return messagePoolBatchList;
@@ -219,4 +383,8 @@ public class BatchViewHandler {
 		return messageOtpBatchList;
 	}
 	
+	public List<WaSendTemplate> getMessageSendTemplateBatchList() {
+		return messageSendTemplateBatchList;
+	}
+
 }

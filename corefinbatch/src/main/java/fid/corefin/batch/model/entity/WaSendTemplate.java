@@ -18,10 +18,10 @@ public class WaSendTemplate {
 	private Date date;
 	
 	@Column(name = "TOTAL_PLAN_SEND_TEMPLATE")
-	private int totalPlanPoolSendTemplate;
+	private int totalPlanSendTemplate;
 	
 	@Column(name = "TOTAL_ACTUAL_SEND_TEMPLATE")
-	private int totalActualPoolSendTemplate;
+	private int totalActualSendTemplate;
 	
 	@Column(name = "PENDING_ENROUTE")
 	private int pendingEnroute;
@@ -43,20 +43,20 @@ public class WaSendTemplate {
 		this.date = date;
 	}
 
-	public int getTotalPlanPoolSendTemplate() {
-		return totalPlanPoolSendTemplate;
+	public int getTotalPlanSendTemplate() {
+		return totalPlanSendTemplate;
 	}
 
-	public void setTotalPlanPoolSendTemplate(int totalPlanPoolSendTemplate) {
-		this.totalPlanPoolSendTemplate = totalPlanPoolSendTemplate;
+	public void setTotalPlanSendTemplate(int totalPlanSendTemplate) {
+		this.totalPlanSendTemplate = totalPlanSendTemplate;
 	}
 
-	public int getTotalActualPoolSendTemplate() {
-		return totalActualPoolSendTemplate;
+	public int getTotalActualSendTemplate() {
+		return totalActualSendTemplate;
 	}
 
-	public void setTotalActualPoolSendTemplate(int totalActualPoolSendTemplate) {
-		this.totalActualPoolSendTemplate = totalActualPoolSendTemplate;
+	public void setTotalActualSendTemplate(int totalActualSendTemplate) {
+		this.totalActualSendTemplate = totalActualSendTemplate;
 	}
 
 	public int getPendingEnroute() {

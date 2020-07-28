@@ -81,14 +81,14 @@ table {
 							<prime:column id="waPoolActualData" headerText="Total Actual Pool Data">#{waPool.totalActualPool}</prime:column>
 							<prime:column id="waPoolDevData" headerText="Deviation Pool Data">#{waPool.deviationData}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('waPoolId')}"
+						<prime:commandButton value="Refresh"  id="refreshWaPool"
+							actionListener="#{batchViewHandler.refreshBatchInfo('refWaPool')}"
 							update="waPoolId"></prime:commandButton>
 					</b:panel>
 					<!-- WA MESSAGE SEND TEMPLATE -->
 					<b:panel rendered="#{batchViewHandler.showMessageSendTemplate}">
-						<prime:dataTable value="#{batchViewHandler.journalQueueList}"
-							var="journal" id="waSendTemplateId" rowKey="#{journal.id}" paginator="true"
+						<prime:dataTable value="#{batchViewHandler.messageSendTemplateBatchList}"
+							var="waSend" id="waSendTemplateId" rowKey="#{waSend.date}" paginator="true"
 							rows="10">
 							<prime:columnGroup type="header">
 								<prime:row>
@@ -105,20 +105,20 @@ table {
 								</prime:row>
 							</prime:columnGroup>
 							<prime:column id="waSendTemplateDate">
-								<h:outputText value="20-04-2020">
+								<h:outputText value="#{waSend.date}">
 									<f:convertDateTime pattern="dd-MM-yyyy" />
 								</h:outputText>
 							</prime:column>
-							<prime:column id="waSendTemplatePlanData">200</prime:column>
-							<prime:column id="waSendTemplateActualData">140</prime:column>
-							<prime:column id="waPendingEnroute">20</prime:column>
-							<prime:column id="waRreject">20</prime:column>
-							<prime:column id="waError">20</prime:column>
-							<prime:column id="waSendTemplateDevData">60</prime:column>
+							<prime:column id="waSendTemplatePlanData">#{waSend.totalPlanSendTemplate}</prime:column>
+							<prime:column id="waSendTemplateActualData">#{waSend.totalActualSendTemplate}</prime:column>
+							<prime:column id="waPendingEnroute">#{waSend.pendingEnroute}</prime:column>
+							<prime:column id="waReject">#{waSend.reject}</prime:column>
+							<prime:column id="waError">#{waSend.error}</prime:column>
+							<prime:column id="waSendTemplateDevData">#{waSend.deviationData}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('jId')}"
-							update="jId"></prime:commandButton>
+						<prime:commandButton value="Refresh" id="refreshWaSend"
+							actionListener="#{batchViewHandler.refreshBatchInfo('refWaSendTemplate')}"
+							update="waSendTemplateId"></prime:commandButton>
 					</b:panel>
 					<!-- WA OTP -->
 					<b:panel rendered="#{batchViewHandler.showMessageOTP}">
@@ -134,13 +134,206 @@ table {
 							<prime:column id="waOtpFailed" headerText="OTP Failed">#{waOtp.otpFailed}</prime:column>
 							<prime:column id="waOtpObsolete" headerText="OTP Obsolete">#{waOtp.otpObsolete}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('waOtpId')}"
+						<prime:commandButton value="Refresh" id="refWaOtp"
+							actionListener="#{batchViewHandler.refreshBatchInfo('refWaOtp')}"
 							update="waOtpId"></prime:commandButton>
 					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showJournal}">
+					<!-- add pak mario -->
+					<b:panel rendered="#{batchViewHandler.showJournal}">	
+						 <b:accordion>
+						 	<b:panel id="search" title="Search">
+						 		<h:panelGrid id="grid1" columns="1" columnClasses="vtop,vmid,vmid">
+						 			<h:panelGrid columns="2">
+						 				<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+						 					<prime:outputLabel for="dateFrom" value="Date From:" />
+											<prime:calendar id="dateFrom" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+											<prime:message for="dateFrom" display="icon" />
+						 				</h:panelGrid>
+										
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel for="dateTo" value="To:" />
+											<prime:calendar id="dateTo" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+											<prime:message for="dateTo" display="icon" />
+										</h:panelGrid>
+						 			</h:panelGrid>
+						 			
+						 			<h:panelGrid columns="1">
+						 				<h:outputText value="and" />
+						 			</h:panelGrid>
+						 			
+						 			<h:panelGrid columns="2">
+						 				<prime:outputLabel for="moduleJ" value="Module:" />
+										<prime:selectOneMenu id="moduleJ" value="#{batchViewHandler.moduleJ}" style="width:125px">
+											<f:selectItem itemLabel="Select One" itemValue="" />
+											<f:selectItem itemLabel="VA" itemValue="VA" />
+											<f:selectItem itemLabel="CP" itemValue="CP" />
+											<f:selectItem itemLabel="JB" itemValue="JB" />
+											<f:selectItem itemLabel="JM" itemValue="JM" />
+											<f:selectItem itemLabel="SL" itemValue="SL" />
+											<f:selectItem itemLabel="XY" itemValue="XY" />
+											<f:selectItem itemLabel="CB" itemValue="CB" />
+										</prime:selectOneMenu>
+						 			</h:panelGrid>
+						 		</h:panelGrid>
+
+								<!-- <h:panelGroup>
+									<prime:outputLabel for="dateFrom" value="Date From:" />
+									<prime:calendar id="dateFrom" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+									<prime:message for="dateFrom" display="icon" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<prime:outputLabel for="dateTo" value="To:" />
+									<prime:calendar id="dateTo" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+									<prime:message for="dateTo" display="icon" />
+								</h:panelGroup>
+
+								<h:outputText value="and" />
+								<h:outputText />
+
+								<prime:outputLabel for="moduleJ" value="Module:" />
+								<prime:selectOneMenu id="moduleJ" value="#{batchViewHandler.moduleJ}">
+									<f:selectItem itemLabel="Select One" itemValue="" />
+									<f:selectItem itemLabel="VA" itemValue="VA" />
+									<f:selectItem itemLabel="CP" itemValue="CP" />
+									<f:selectItem itemLabel="JB" itemValue="JB" />
+									<f:selectItem itemLabel="JM" itemValue="JM" />
+									<f:selectItem itemLabel="SL" itemValue="SL" />
+									<f:selectItem itemLabel="XY" itemValue="XY" />
+									<f:selectItem itemLabel="CB" itemValue="CB" />
+								</prime:selectOneMenu> -->
+
+								<prime:spacer width="20px" />
+								
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.buttonAction}" id="btnSearchJ" update="jId" style="margin-right:20px;" />
+								</h:panelGroup>
+						 	</b:panel>
+						</b:accordion>
+							
+						<prime:dataTable value="#{batchViewHandler.glJournalQueueList}"
+							var="journal" id="jId" rowKey="#{journal.id}" paginator="true" rows="10">
+							
+							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
+							<prime:column id="jmaker" headerText="Maker">#{journal.maker}</prime:column>
+							<prime:column id="jchecker" headerText="Checker">#{journal.checker}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date">
+								<h:outputText value="#{journal.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jlastUpdateBy" headerText="Last Update By">#{journal.lastUpdateBy}</prime:column>
+							<prime:column id="jlastUpdateDate" headerText="Last Update Date">
+								<h:outputText value="#{journal.lastUpdateDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jstatus" headerText="Status">#{journal.status}</prime:column>
+							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column>
+							
+							<!-- <prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
+							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date">
+								<h:outputText value="#{journal.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column> -->
+						</prime:dataTable>
+						<prime:commandButton value="Refresh" actionListener="#{batchViewHandler.refreshBatchInfo('jId')}" update="jId"></prime:commandButton>
+					</b:panel>
+					<b:panel rendered="#{batchViewHandler.showJournalArchive}">
+					
+						<b:accordion>
+						 	<b:panel id="searchJA" title="Search">
+						 		<h:panelGrid id="gridJA" columns="1" columnClasses="vtop,vmid,vmid">
+						 			<h:panelGrid columns="2">
+						 				<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+						 					<prime:outputLabel for="dateFromJA" value="Date From:" />
+											<prime:calendar id="dateFromJA" value="#{batchViewHandler.date1JA}" pattern="yyyy/MM/dd" required="true" />
+											<prime:message for="dateFromJA" display="icon" />
+						 				</h:panelGrid>
+										
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel for="dateToJA" value="To:" />
+											<prime:calendar id="dateToJA" value="#{batchViewHandler.date2JA}" pattern="yyyy/MM/dd" required="true" />
+											<prime:message for="dateToJA" display="icon" />
+										</h:panelGrid>
+						 			</h:panelGrid>
+						 			
+						 			<h:panelGrid columns="1">
+						 				<h:outputText value="and" />
+						 			</h:panelGrid>
+						 			
+						 			<h:panelGrid columns="2">
+						 				<prime:outputLabel for="moduleJA" value="Module:" />
+										<prime:selectOneMenu id="moduleJA" value="#{batchViewHandler.moduleJA}" style="width:125px">
+											<f:selectItem itemLabel="Select One" itemValue="" />
+											<f:selectItem itemLabel="VA" itemValue="VA" />
+											<f:selectItem itemLabel="CP" itemValue="CP" />
+											<f:selectItem itemLabel="JB" itemValue="JB" />
+											<f:selectItem itemLabel="JM" itemValue="JM" />
+											<f:selectItem itemLabel="SL" itemValue="SL" />
+											<f:selectItem itemLabel="XY" itemValue="XY" />
+											<f:selectItem itemLabel="CB" itemValue="CB" />
+										</prime:selectOneMenu>
+						 			</h:panelGrid>
+						 		</h:panelGrid>
+
+								<prime:spacer width="20px" />
+								
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.buttonActionJA}" id="btnSearchJA" update="jAId" style="margin-right:20px;" />
+								</h:panelGroup>
+						 	</b:panel>
+						</b:accordion>
+						
+						<prime:dataTable value="#{batchViewHandler.glJournalQueueArchiveList}"
+							var="journalArchive" id="jAId" rowKey="#{journal.id}" paginator="true" rows="10">
+							
+							<prime:column id="jretry" headerText="Retry">#{journalArchive.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID">#{journalArchive.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module">#{journalArchive.module}</prime:column>
+							<prime:column id="jmaker" headerText="Maker">#{journalArchive.maker}</prime:column>
+							<prime:column id="jchecker" headerText="Checker">#{journalArchive.checker}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By">#{journalArchive.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date">
+								<h:outputText value="#{journalArchive.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jlastUpdateBy" headerText="Last Update By">#{journalArchive.lastUpdateBy}</prime:column>
+							<prime:column id="jlastUpdateDate" headerText="Last Update Date">
+								<h:outputText value="#{journalArchive.lastUpdateDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jProcessDate" headerText="Process Date">#{journalArchive.processDate}</prime:column>
+							<prime:column id="jFidJournal" headerText="FID Journal">#{journalArchive.fIdJournal}</prime:column>
+							
+							<!-- <prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
+							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date">
+								<h:outputText value="#{journal.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column> -->
+						</prime:dataTable>
+						<prime:commandButton value="Refresh" actionListener="#{batchViewHandler.refreshBatchInfo('jAId')}" update="jAId"></prime:commandButton>
+					</b:panel>
+					<!-- end add -->
+					<!-- <b:panel rendered="#{batchViewHandler.showJournal}">
 						<prime:dataTable value="#{batchViewHandler.journalQueueList}"
-							var="journal" id="jId" rowKey="#{journal.id}" paginator="true"
+							var="journal" id="jId2" rowKey="#{journal.id}" paginator="true"
 							rows="10">
 							<prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
 							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
@@ -155,8 +348,8 @@ table {
 							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column>
 						</prime:dataTable>
 						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('jId')}"
-							update="jId"></prime:commandButton>
+							actionListener="#{batchViewHandler.refreshBatchInfo('jId2')}"
+							update="jId2"></prime:commandButton>
 					</b:panel>
 					<b:panel rendered="#{batchViewHandler.showMDBatch}">
 						<prime:dataTable value="#{batchViewHandler.dmBatchList}" var="dm"
@@ -260,15 +453,14 @@ table {
 						<prime:commandButton value="Update Column"
 							actionListener="#{batchViewHandler.refreshBatchInfo('mposId')}"
 							update="mposId"></prime:commandButton>
-					</b:panel>
+					</b:panel> -->
 				</b:column>
 			</b:row>
 <!-- 			<prime:blockUI block="formID" trigger="treeBatch" /> -->
-			<prime:blockUI block="formID" trigger="treeBatch" >
+			<prime:blockUI block="formID" trigger="treeBatch, refreshWaPool, refreshWaSend, refWaOtp" >
         LOADING<br />
 				<prime:graphicImage name="demo/images/ajaxloadingbar.gif" />
 			</prime:blockUI>
-
 		</h:form>
 	</b:container>
 </body>

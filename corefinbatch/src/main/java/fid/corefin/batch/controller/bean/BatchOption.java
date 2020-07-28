@@ -48,23 +48,26 @@ public class BatchOption implements Serializable {
 		generalBatchInfoList.add(new GeneralBatchInfo("WA OTP", "Daily", "WAOTP"));
 		batchNames.add("WA OTP");
 		
-		generalBatchInfoList.add(new GeneralBatchInfo("Monthly", "Monthly", "M"));
-		batchNames.add("Monthly");
-
-		generalBatchInfoList.add(new GeneralBatchInfo("Daily", "Daily", "D"));
-		batchNames.add("Daily");
+//		generalBatchInfoList.add(new GeneralBatchInfo("Monthly", "Monthly", "M"));
+//		batchNames.add("Monthly");
+//
+//		generalBatchInfoList.add(new GeneralBatchInfo("Daily", "Daily", "D"));
+//		batchNames.add("Daily");
 
 		generalBatchInfoList.add(new GeneralBatchInfo("Journal Queue", "Daily", "J"));
 		batchNames.add("Journal Queue");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("Journal Queue Archive", "Daily", "Ja"));
+		batchNames.add("Journal Queue Archive");
 
-		generalBatchInfoList.add(new GeneralBatchInfo("Data Syncronization", "Daily", "S"));
-		batchNames.add("Data Syncronization");
-
-		generalBatchInfoList.add(new GeneralBatchInfo("mPos - Notification", "Daily", "P"));
-		batchNames.add("mPos - Notification");
-
-		generalBatchInfoList.add(new GeneralBatchInfo("mColl - Notification", "Daily", "C"));
-		batchNames.add("mColl - Notification");
+//		generalBatchInfoList.add(new GeneralBatchInfo("Data Syncronization", "Daily", "S"));
+//		batchNames.add("Data Syncronization");
+//
+//		generalBatchInfoList.add(new GeneralBatchInfo("mPos - Notification", "Daily", "P"));
+//		batchNames.add("mPos - Notification");
+//
+//		generalBatchInfoList.add(new GeneralBatchInfo("mColl - Notification", "Daily", "C"));
+//		batchNames.add("mColl - Notification");
 
 	}
 
@@ -216,9 +219,9 @@ public class BatchOption implements Serializable {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			//for testing
-			String tgl = "2020-04-04";
+			//String tgl = "2020-08-06";
 			//for live
-			//String tgl = sdf.format(new Date());
+			String tgl = sdf.format(new Date());
 			Date date = sdf.parse(tgl);
 			messagePoolBatchList = messagePoolService.getMessagePoolBatchList(date);	
 		} catch (Exception e) {
@@ -230,7 +233,13 @@ public class BatchOption implements Serializable {
 	public List<WaSendTemplate> getMessageWaSendTemplate() throws Exception {
 		List<WaSendTemplate> messageWaSendTemplate = new ArrayList<WaSendTemplate>();
 		try {
-			messageWaSendTemplate.add(new WaSendTemplate());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			//for testing
+			//String tgl = "2020-04-30";
+			//for live
+			String tgl = sdf.format(new Date());
+			Date date = sdf.parse(tgl);
+			messageWaSendTemplate = messagePoolService.getMessageSendTemplateBatchList(date);	
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -242,9 +251,9 @@ public class BatchOption implements Serializable {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			//for testing
-			String tgl = "2020-06-07";
+			//String tgl = "2020-07-24";
 			//for live
-			//String tgl = sdf.format(new Date());
+			String tgl = sdf.format(new Date());
 			Date date = sdf.parse(tgl);
 			waOtpList = messagePoolService.getMessageOtpBatchList(date);
 		}catch (Exception e) {

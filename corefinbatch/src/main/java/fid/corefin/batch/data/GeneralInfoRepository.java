@@ -13,14 +13,15 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fid.corefin.batch.model.entity.OtpArchive;
+import fid.corefin.batch.model.entity.GeneralInfo;
+import fid.corefin.batch.model.entity.SummaryProcess;
 import fid.corefin.batch.util.Repository;
 
 @Repository
-public class OtpArchiveRepository extends BaseMySQLEntityRepository<OtpArchive> {
+public class GeneralInfoRepository extends BaseMySQLEntityRepository<GeneralInfo> {
 	@Override
 	protected Predicate[] extractPredicatesSingle(Map<String, Object> params, CriteriaBuilder criteriaBuilder,
-			Root<OtpArchive> root) throws Exception {
+			Root<GeneralInfo> root) throws Exception {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -33,15 +34,15 @@ public class OtpArchiveRepository extends BaseMySQLEntityRepository<OtpArchive> 
 	}
 
 	@Override
-	protected void addCriteriaQueryOrderBySingleInstance(CriteriaQuery<OtpArchive> criteriaQuery,
-			CriteriaBuilder criteriaBuilder, Root<OtpArchive> root, Map<String, Object> params) throws Exception {
+	protected void addCriteriaQueryOrderBySingleInstance(CriteriaQuery<GeneralInfo> criteriaQuery,
+			CriteriaBuilder criteriaBuilder, Root<GeneralInfo> root, Map<String, Object> params) throws Exception {
 		criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
 
 	}
 
 	@Override
 	protected Predicate[] extractPredicates(Map<String, Object> params, CriteriaBuilder criteriaBuilder,
-			Root<OtpArchive> root) throws Exception {
+			Root<GeneralInfo> root) throws Exception {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -52,30 +53,25 @@ public class OtpArchiveRepository extends BaseMySQLEntityRepository<OtpArchive> 
 		return predicates.toArray(new Predicate[] {});
 	}
 
-	public void saveFlush(OtpArchive otpArchive) throws Exception {
+	public void saveFlush(GeneralInfo generalInfo) throws Exception {
 		try {
-			entityManager.persist(otpArchive);
+			entityManager.persist(generalInfo);
 			entityManager.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public List<OtpArchive> getListByDate(Date date) {
+	public List<GeneralInfo> getAllGeneralList() {
+		List<GeneralInfo> list = new ArrayList<GeneralInfo>();
 		try {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(date);
-			cal.add(Calendar.DATE, 1);
-			Date nextDay = cal.getTime();
 			EntityManager em = getEntityManager();
-			TypedQuery<OtpArchive> query = em.createQuery(
-					"SELECT p FROM OtpArchive p WHERE p.createDate <= ?1 AND p.createDate >= ?2",OtpArchive.class);
-			query.setParameter(1, nextDay);
-			query.setParameter(2, date);
-			return query.getResultList();	
-		} catch (Exception e) {
+			TypedQuery<GeneralInfo> query = em.createQuery(
+					"SELECT p FROM GeneralInfo p",GeneralInfo.class);
+			list = query.getResultList();
+		}catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return list;
 	}
 }

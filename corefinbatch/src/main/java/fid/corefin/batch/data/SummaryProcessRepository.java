@@ -62,17 +62,21 @@ public class SummaryProcessRepository extends BaseMySQLEntityRepository<SummaryP
 	}
 	
 	public SummaryProcess getSummaryProcessByDate(Date date, String processType) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		cal.add(Calendar.DATE, 1);
-		Date nextDay = cal.getTime();
-		EntityManager em = getEntityManager();
-		TypedQuery<SummaryProcess> query = em.createQuery(
-				"SELECT p FROM SummaryProcess p WHERE p.create_date <= ?1 and p.create_date >= ?2 and p.process_type = ?3",SummaryProcess.class);
-		query.setParameter(1, nextDay);
-		query.setParameter(2, date);
-		query.setParameter(3, processType);
-		SummaryProcess summary = query.getSingleResult();
-		return summary;
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DATE, 1);
+			Date nextDay = cal.getTime();
+			EntityManager em = getEntityManager();
+			TypedQuery<SummaryProcess> query = em.createQuery(
+					"SELECT p FROM SummaryProcess p WHERE p.create_date <= ?1 and p.create_date >= ?2 and p.process_type = ?3",SummaryProcess.class);
+			query.setParameter(1, nextDay);
+			query.setParameter(2, date);
+			query.setParameter(3, processType);
+			SummaryProcess summary = query.getSingleResult();
+			return summary;	
+		}catch (Exception e) {
+			return null;
+		}
 	}
 }
