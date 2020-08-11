@@ -339,11 +339,11 @@ public class BatchViewHandler {
 	}
 	
 	public void changeParamSearch(final AjaxBehaviorEvent event) {
-		if(selectedSearchType.equals(DefaultSearch)) {
+		if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
 			searchByModule = true;
 			searchByRefId = false;
 			searchByJournalId = false;
-		} else if (selectedSearchType.equals("RefId")){
+		} else if (selectedSearchType.equalsIgnoreCase("RefId")){
 			searchByModule = false;
 			searchByRefId = true;
 			searchByJournalId = false;
