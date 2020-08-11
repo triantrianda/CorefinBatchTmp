@@ -33,7 +33,7 @@ public class GlJournalQueueRepository extends BaseEntityRepository<GlJournalQueu
 	}
 	
 	public List<GlJournalQueue> getGlJournalQueue(String createDate) throws Exception {
-		String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate)=:createDate";
+		String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate)=:createDate Order By p.createDate Desc";
 
 		TypedQuery<GlJournalQueue> typedQuery = entityManager.createQuery(jpql, GlJournalQueue.class)
 				.setParameter("createDate", createDate);
@@ -43,7 +43,7 @@ public class GlJournalQueueRepository extends BaseEntityRepository<GlJournalQueu
 	
 	public List<GlJournalQueue> getGlJournalQueueFromTo(String from, String to) throws Exception {
 		
-		  String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate) between :from and :to";
+		  String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate) between :from and :to Order By p.createDate Desc";
 		  
 		  TypedQuery<GlJournalQueue> typedQuery = entityManager.createQuery(jpql,GlJournalQueue.class)
 				  .setParameter("from", from)
@@ -54,7 +54,7 @@ public class GlJournalQueueRepository extends BaseEntityRepository<GlJournalQueu
 	
 	public List<GlJournalQueue> getGlJournalQueueFromToWithModule(String from, String to, String module) throws Exception {
 		
-		  String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate) Between :from and :to And module=:module";
+		  String jpql = "Select p From GlJournalQueue p Where CONVERT(date,p.createDate) Between :from and :to And module=:module Order By p.createDate Desc";
 		  
 		  TypedQuery<GlJournalQueue> typedQuery = entityManager.createQuery(jpql,GlJournalQueue.class)
 				  .setParameter("from", from)
@@ -63,4 +63,12 @@ public class GlJournalQueueRepository extends BaseEntityRepository<GlJournalQueu
 		  
 		  return typedQuery.getResultList();
 	}
+	
+	public List<GlJournalQueue> getGlJournalQueueByRefId(String refId) throws Exception{
+		String jpql = "SELECT p FROM GlJournalQueue p WHERE p.refId=:refId";
+		TypedQuery<GlJournalQueue> typedQuery = entityManager.createQuery(jpql, GlJournalQueue.class)
+				.setParameter("refId", refId);
+		return typedQuery.getResultList();
+	}
+	
 }

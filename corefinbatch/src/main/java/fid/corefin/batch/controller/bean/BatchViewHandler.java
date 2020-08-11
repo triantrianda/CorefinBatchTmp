@@ -7,10 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
 import org.primefaces.event.NodeSelectEvent;
@@ -59,7 +62,7 @@ public class BatchViewHandler {
 	private List<WaOTP> messageOtpBatchList = new ArrayList<WaOTP>();
 	
 	private List<WaSendTemplate> messageSendTemplateBatchList = new ArrayList<WaSendTemplate>();
-	
+
 	private TreeNode selectedNode;
 
 	private boolean showMessagePooling;
@@ -86,10 +89,18 @@ public class BatchViewHandler {
     private Date date2;
     private Date date1JA;
     private Date date2JA;
-    private String moduleJ; 
+    private String refId;
+    private String journalId;
+	private String moduleJ; 
     private String moduleJA;
+    private String selectedSearchType;
+    private boolean searchByModule;
+    private boolean searchByRefId;
+    private boolean searchByJournalId;
+    private final String DefaultSearch = "MODULE";
     
-    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
+	DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	@ManagedProperty("#{batchOption}")
 	private BatchOption batchOption;
@@ -154,6 +165,18 @@ public class BatchViewHandler {
 		return batchOption;
 	}
 
+	public boolean isSearchByModule() {
+		return searchByModule;
+	}
+	
+	public boolean isSearchByRefId() {
+		return searchByRefId;
+	}
+	
+	public boolean isSearchByJournalId() {
+		return searchByJournalId;
+	}
+	
 	@SuppressWarnings("unused")
 	public void onNodeSelect(NodeSelectEvent event) throws Exception {
 		showMessagePooling = false;
@@ -172,6 +195,10 @@ public class BatchViewHandler {
 		date2JA = null;
 		moduleJ = null;
 		moduleJA = null;
+		searchByModule = true;
+		searchByRefId = false;
+		searchByJournalId = false;
+		selectedSearchType = DefaultSearch;
 		
 		/*
 		 * try { closeAfter = HibernateHelper.beginTx(); Session session =
@@ -243,12 +270,21 @@ public class BatchViewHandler {
 	
 	public void buttonAction(ActionEvent ae) {
 		try {
-			if (moduleJ == null) {
-				glJournalQueueList = batchMonitoringService.getGlJournalQueueFromTo(dateFormat.format(date1), dateFormat.format(date2));
+			if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+				if (date1.compareTo(date2) > 0) {
+					FacesContext.getCurrentInstance().addMessage("formID:dateFrom", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Date From cannot greater then Date To."));
+				}
+				
+				if (moduleJ == null) {
+					glJournalQueueList = batchMonitoringService.getGlJournalQueueFromTo(dateFormat.format(date1), dateFormat.format(date2));
+				}
+				else {
+					glJournalQueueList = batchMonitoringService.getGlJournalQueueFromToWithModule(dateFormat.format(date1), dateFormat.format(date2), moduleJ);
+				}	
+			} else {
+				glJournalQueueList = batchMonitoringService.getGlJournalQueueByRefId(refId);
 			}
-			else {
-				glJournalQueueList = batchMonitoringService.getGlJournalQueueFromToWithModule(dateFormat.format(date1), dateFormat.format(date2), moduleJ);
-			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,11 +293,22 @@ public class BatchViewHandler {
 	
 	public void buttonActionJA(ActionEvent ae) {
 		try {
-			if (moduleJA == null) {
-				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromTo(dateFormat.format(date1JA), dateFormat.format(date2JA));
-			} else {
-				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromToWithModule(dateFormat.format(date1JA), dateFormat.format(date2JA), moduleJA);
+			if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+				if (date1JA.compareTo(date2JA) > 0) {
+					FacesContext.getCurrentInstance().addMessage("formID:dateFromJA", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Date From cannot greater then Date To."));
+				}
+				
+				if (moduleJA == null) {
+					glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromTo(dateFormat.format(date1JA), dateFormat.format(date2JA));
+				} else {
+					glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveFromToWithModule(dateFormat.format(date1JA), dateFormat.format(date2JA), moduleJA);
+				}
+			} else if(selectedSearchType.equalsIgnoreCase("RefId")) {
+				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveByRefId(refId);
+			} else if(selectedSearchType.equalsIgnoreCase("JournalId")) {
+				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchiveByJournalId(journalId);
 			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -289,6 +336,22 @@ public class BatchViewHandler {
 			break;
 		}
 		System.out.println("REFRESH ID : " + id);
+	}
+	
+	public void changeParamSearch(final AjaxBehaviorEvent event) {
+		if(selectedSearchType.equals(DefaultSearch)) {
+			searchByModule = true;
+			searchByRefId = false;
+			searchByJournalId = false;
+		} else if (selectedSearchType.equals("RefId")){
+			searchByModule = false;
+			searchByRefId = true;
+			searchByJournalId = false;
+		} else {
+			searchByModule = false;
+			searchByRefId = false;
+			searchByJournalId = true;
+		}
 	}
 
 	public List<JournalBatch> getJournalQueueList() {
@@ -358,6 +421,14 @@ public class BatchViewHandler {
 	public void setDate2JA(Date date2ja) {
 		date2JA = date2ja;
 	}
+	
+	public String getRefId() {
+		return refId;
+	}
+
+	public void setRefId(String refId) {
+		this.refId = refId;
+	}
 
 	public String getModuleJ() {
 		return moduleJ;
@@ -386,5 +457,26 @@ public class BatchViewHandler {
 	public List<WaSendTemplate> getMessageSendTemplateBatchList() {
 		return messageSendTemplateBatchList;
 	}
+	
+	public BatchMonitoringService getBatchMonitoringService() {
+		return batchMonitoringService;
+	}
+	
+	public String getSelectedSearchType() {
+		return selectedSearchType;
+	}
+
+	public void setSelectedSearchType(String selectedSearchType) {
+		this.selectedSearchType = selectedSearchType;
+	}
+	
+	public String getJournalId() {
+		return journalId;
+	}
+
+	public void setJournalId(String journalId) {
+		this.journalId = journalId;
+	}
+
 
 }

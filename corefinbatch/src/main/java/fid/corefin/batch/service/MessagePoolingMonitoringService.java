@@ -221,7 +221,7 @@ public class MessagePoolingMonitoringService implements Serializable {
 	
 	public void insertAndUpdateDataOtp(Date date) { 
 		try {
-		List<WaOTP> waOtpUpdate = waOtpRepository.getWaOtpListToUpdate(date);
+		List<WaOTP> waOtpUpdate = waOtpRepository.getWaOtpListToUpdate(getNextDay(date, 1));
 		if(CommonUtil.isNotNullOrEmpty(waOtpUpdate)) {
 			for(WaOTP waOtp : waOtpUpdate) {
 				updateOtpStatus(waOtp);

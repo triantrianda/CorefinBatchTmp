@@ -67,7 +67,7 @@ public class WaOtpRepository extends BaseMySQLEntityRepository2<WaOTP> {
 					"SELECT p FROM WaOTP p ORDER BY p.date desc",WaOTP.class);
 			return query.getResultList();	
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
@@ -80,7 +80,7 @@ public class WaOtpRepository extends BaseMySQLEntityRepository2<WaOTP> {
 			query.setParameter(1, date);
 			return query.getSingleResult();	
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
@@ -89,14 +89,11 @@ public class WaOtpRepository extends BaseMySQLEntityRepository2<WaOTP> {
 		try {
 			EntityManager em = getEntityManager();
 			TypedQuery<WaOTP> query = em.createQuery(
-					"SELECT p FROM WaOTP p WHERE p.date < ?1 AND p.otpSuccess = ?2 AND p.otpFailed = ?3 AND p.otpObsolete = ?4",WaOTP.class);
+					"SELECT p FROM WaOTP p WHERE p.date < ?1",WaOTP.class);
 			query.setParameter(1, date);
-			query.setParameter(2, 0);
-			query.setParameter(3, 0);
-			query.setParameter(4, 0);
 			return query.getResultList();	
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}

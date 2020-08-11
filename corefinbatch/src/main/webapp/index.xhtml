@@ -17,7 +17,9 @@
 table {
 	font-size: 12px;
 }
+
 </style>
+<!-- <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/style/common.css"/> -->
 </h:head>
 <body>
 	<b:navBar brand="COREFIN BATCH" brandHref="index.jsf" inverse="true"
@@ -142,179 +144,203 @@ table {
 					<b:panel rendered="#{batchViewHandler.showJournal}">	
 						 <b:accordion>
 						 	<b:panel id="search" title="Search">
-						 		<h:panelGrid id="grid1" columns="1" columnClasses="vtop,vmid,vmid">
-						 			<h:panelGrid columns="2">
-						 				<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
-						 					<prime:outputLabel for="dateFrom" value="Date From:" />
-											<prime:calendar id="dateFrom" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
-											<prime:message for="dateFrom" display="icon" />
-						 				</h:panelGrid>
-										
+								<h:panelGroup id="panelSearch" styleClass="fieldPackage" style="display: block">
+									<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
 										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
-											<prime:outputLabel for="dateTo" value="To:" />
-											<prime:calendar id="dateTo" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
-											<prime:message for="dateTo" display="icon" />
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParam"/>
+											<prime:selectOneMenu id="searchParam" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="panelSearch" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Module" itemValue="Module"/>
+												<f:selectItem itemLabel="Reference Id" itemValue="RefId"/>
+											</prime:selectOneMenu>
 										</h:panelGrid>
-						 			</h:panelGrid>
-						 			
-						 			<h:panelGrid columns="1">
-						 				<h:outputText value="and" />
-						 			</h:panelGrid>
-						 			
-						 			<h:panelGrid columns="2">
-						 				<prime:outputLabel for="moduleJ" value="Module:" />
-										<prime:selectOneMenu id="moduleJ" value="#{batchViewHandler.moduleJ}" style="width:125px">
-											<f:selectItem itemLabel="Select One" itemValue="" />
-											<f:selectItem itemLabel="VA" itemValue="VA" />
-											<f:selectItem itemLabel="CP" itemValue="CP" />
-											<f:selectItem itemLabel="JB" itemValue="JB" />
-											<f:selectItem itemLabel="JM" itemValue="JM" />
-											<f:selectItem itemLabel="SL" itemValue="SL" />
-											<f:selectItem itemLabel="XY" itemValue="XY" />
-											<f:selectItem itemLabel="CB" itemValue="CB" />
-										</prime:selectOneMenu>
-						 			</h:panelGrid>
-						 		</h:panelGrid>
-
-								<!-- <h:panelGroup>
-									<prime:outputLabel for="dateFrom" value="Date From:" />
-									<prime:calendar id="dateFrom" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
-									<prime:message for="dateFrom" display="icon" />
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup>
+										<h:panelGroup id="searchByModule" rendered="#{batchViewHandler.searchByModule}">
+										<h:panelGrid columns="1" columnClasses="vmidleft,vmid">
+											<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+												<prime:outputLabel style="width:80px" for="moduleJ" value="Module"/>
+												<prime:selectOneMenu id="moduleJ" value="#{batchViewHandler.moduleJ}">
+													<f:selectItem itemValue="" itemLabel="Select One"/>
+													<f:selectItems value="#{batchViewHandler.batchMonitoringService.listOfModule}"/>
+												</prime:selectOneMenu>
+											</h:panelGrid>
+										</h:panelGrid>
+										<prime:spacer height="10" width="2"/>
+										<h:panelGrid columns="3" columnClasses="vmidleft,vmidright" cellpadding="10">
+							 				<h:panelGrid columns="3" columnClasses="vmidleft,vmid">
+							 					<prime:outputLabel style="width:80px" for="dateFrom" value="Date From"/>
+												<prime:calendar id="dateFrom" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+												<prime:message for="dateFrom" display="icon" />
+							 				</h:panelGrid>	
+							 				<prime:spacer width="4"/>
+							 				<h:panelGrid columns="3" columnClasses="right,vmid">
+												<prime:outputLabel style="width:30px" for="dateTo" value="To"/>
+												<prime:calendar id="dateTo" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+												<prime:message for="dateTo" display="icon" />
+											</h:panelGrid>	
+										</h:panelGrid>
+										</h:panelGroup>
+										<h:panelGroup id="searchByRefId" rendered="#{batchViewHandler.searchByRefId}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="refId" value="Ref Id"/>
+												<prime:inputText id="refId" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="refId" display="icon" />
+											</h:panelGrid>
+										</h:panelGroup>
+									</h:panelGroup>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup styleClass="fieldPackage" style="width: 215px"
+										layout="block">
+										<prime:commandButton value="Search" title="Search"
+											actionListener="#{batchViewHandler.buttonAction}"
+											id="btnSearchJ" update="jId" style="margin-right:20px;" />
+									</h:panelGroup>
+									<b:message for="dateFrom" autoUpdate="true" />
+									<b:message for="dateTo" autoUpdate="true" />
+									<b:message for="refId" autoUpdate="true"/>
 								</h:panelGroup>
-								<h:panelGroup>
-									<prime:outputLabel for="dateTo" value="To:" />
-									<prime:calendar id="dateTo" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
-									<prime:message for="dateTo" display="icon" />
-								</h:panelGroup>
-
-								<h:outputText value="and" />
-								<h:outputText />
-
-								<prime:outputLabel for="moduleJ" value="Module:" />
-								<prime:selectOneMenu id="moduleJ" value="#{batchViewHandler.moduleJ}">
-									<f:selectItem itemLabel="Select One" itemValue="" />
-									<f:selectItem itemLabel="VA" itemValue="VA" />
-									<f:selectItem itemLabel="CP" itemValue="CP" />
-									<f:selectItem itemLabel="JB" itemValue="JB" />
-									<f:selectItem itemLabel="JM" itemValue="JM" />
-									<f:selectItem itemLabel="SL" itemValue="SL" />
-									<f:selectItem itemLabel="XY" itemValue="XY" />
-									<f:selectItem itemLabel="CB" itemValue="CB" />
-								</prime:selectOneMenu> -->
-
-								<prime:spacer width="20px" />
-								
-								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
-									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.buttonAction}" id="btnSearchJ" update="jId" style="margin-right:20px;" />
-								</h:panelGroup>
-						 	</b:panel>
+							</b:panel>
 						</b:accordion>
+					
+						<prime:dataTable value="#{batchViewHandler.glJournalQueueList}" tableStyle="width:1185px"
+							var="journal" id="jId" rowKey="#{journal.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
 							
-						<prime:dataTable value="#{batchViewHandler.glJournalQueueList}"
-							var="journal" id="jId" rowKey="#{journal.id}" paginator="true" rows="10">
-							
-							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
-							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
-							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
-							<prime:column id="jmaker" headerText="Maker">#{journal.maker}</prime:column>
-							<prime:column id="jchecker" headerText="Checker">#{journal.checker}</prime:column>
-							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
-							<prime:column id="jcreateDate" headerText="Create Date">
+							<prime:column headerText="NO" style="width:40px">
+								<h:outputText value="#{index+1}"></h:outputText>
+							</prime:column>
+							<prime:column id="jretry" headerText="Retry" style="width:50px">#{journal.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID" sortBy="#{journal.refId}" style="width:140px">#{journal.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module" style="width:65px">#{journal.module}</prime:column>
+							<prime:column id="jmaker" headerText="Maker" style="width:125px">#{journal.maker}</prime:column>
+							<prime:column id="jchecker" headerText="Checker" style="width:125px">#{journal.checker}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By" style="width:125px">#{journal.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date" sortBy="#{journal.createDate}" style="width:140px">
 								<h:outputText value="#{journal.createDate}">
 									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
 								</h:outputText>
 							</prime:column>
-							<prime:column id="jlastUpdateBy" headerText="Last Update By">#{journal.lastUpdateBy}</prime:column>
-							<prime:column id="jlastUpdateDate" headerText="Last Update Date">
+							<prime:column id="jlastUpdateBy" headerText="Last Update By" style="width:125px">#{journal.lastUpdateBy}</prime:column>
+							<prime:column id="jlastUpdateDate" headerText="Last Update Date" style="width:140px">
 								<h:outputText value="#{journal.lastUpdateDate}">
 									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
 								</h:outputText>
 							</prime:column>
-							<prime:column id="jstatus" headerText="Status">#{journal.status}</prime:column>
-							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column>
-							
-							<!-- <prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
-							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
-							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
-							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
-							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
-							<prime:column id="jcreateDate" headerText="Create Date">
-								<h:outputText value="#{journal.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column> -->
+							<prime:column id="jstatus" headerText="Status" style="width:60px">#{journal.status}</prime:column>
+							<prime:column id="jprior" headerText="Priority" style="width:60px">#{journal.priority}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh" actionListener="#{batchViewHandler.refreshBatchInfo('jId')}" update="jId"></prime:commandButton>
 					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showJournalArchive}">
 					
+					<b:panel rendered="#{batchViewHandler.showJournalArchive}">
 						<b:accordion>
 						 	<b:panel id="searchJA" title="Search">
-						 		<h:panelGrid id="gridJA" columns="1" columnClasses="vtop,vmid,vmid">
-						 			<h:panelGrid columns="2">
-						 				<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
-						 					<prime:outputLabel for="dateFromJA" value="Date From:" />
-											<prime:calendar id="dateFromJA" value="#{batchViewHandler.date1JA}" pattern="yyyy/MM/dd" required="true" />
-											<prime:message for="dateFromJA" display="icon" />
-						 				</h:panelGrid>
-										
+						 		<h:panelGroup id="panelSearchArc" styleClass="fieldPackage" style="display: block">
+						 			<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
 										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
-											<prime:outputLabel for="dateToJA" value="To:" />
-											<prime:calendar id="dateToJA" value="#{batchViewHandler.date2JA}" pattern="yyyy/MM/dd" required="true" />
-											<prime:message for="dateToJA" display="icon" />
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParamArc"/>
+											<prime:selectOneMenu id="searchParamArc" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="panelSearchArc" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Module" itemValue="Module"/>
+												<f:selectItem itemLabel="Reference Id" itemValue="RefId"/>
+												<f:selectItem itemLabel="Journal Id" itemValue="JournalId"/>
+											</prime:selectOneMenu>
 										</h:panelGrid>
-						 			</h:panelGrid>
-						 			
-						 			<h:panelGrid columns="1">
-						 				<h:outputText value="and" />
-						 			</h:panelGrid>
-						 			
-						 			<h:panelGrid columns="2">
-						 				<prime:outputLabel for="moduleJA" value="Module:" />
-										<prime:selectOneMenu id="moduleJA" value="#{batchViewHandler.moduleJA}" style="width:125px">
-											<f:selectItem itemLabel="Select One" itemValue="" />
-											<f:selectItem itemLabel="VA" itemValue="VA" />
-											<f:selectItem itemLabel="CP" itemValue="CP" />
-											<f:selectItem itemLabel="JB" itemValue="JB" />
-											<f:selectItem itemLabel="JM" itemValue="JM" />
-											<f:selectItem itemLabel="SL" itemValue="SL" />
-											<f:selectItem itemLabel="XY" itemValue="XY" />
-											<f:selectItem itemLabel="CB" itemValue="CB" />
-										</prime:selectOneMenu>
-						 			</h:panelGrid>
-						 		</h:panelGrid>
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup>
+										<h:panelGroup id="searchArcByModule" rendered="#{batchViewHandler.searchByModule}">
+							 			<h:panelGrid id="gridJA" columns="1" columnClasses="vtop,vmid,vmid">
+								 			<h:panelGrid columns="2">
+								 				<prime:outputLabel style="width:80px" for="moduleJA" value="Module" />
+												<prime:selectOneMenu id="moduleJA" value="#{batchViewHandler.moduleJA}" style="width:125px">
+													<f:selectItem itemLabel="Select One" itemValue="" />
+													<f:selectItems value="#{batchViewHandler.batchMonitoringService.listOfModule}"/>
+												</prime:selectOneMenu>
+								 			</h:panelGrid>
+								 			<prime:spacer height="10" width="2"/>
+								 			<h:panelGrid columns="3">
+								 				<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+								 					<prime:outputLabel style="width:80px" for="dateFromJA" value="Date From" />
+													<prime:calendar id="dateFromJA" value="#{batchViewHandler.date1JA}" pattern="yyyy/MM/dd" required="true" />
+													<!-- <prime:message for="dateFromJA" display="icon" /> -->
+								 				</h:panelGrid>
+								 				<prime:spacer width="4"/>
+												<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+													<prime:outputLabel style="width:30px" for="dateToJA" value="To" />
+													<prime:calendar id="dateToJA" value="#{batchViewHandler.date2JA}" pattern="yyyy/MM/dd" required="true" />
+													<!-- <prime:message for="dateToJA" display="icon" /> -->
+												</h:panelGrid>
+								 			</h:panelGrid>
+							 			</h:panelGrid>
+							 			</h:panelGroup>
+							 			<h:panelGroup id="searchArcByRefId" rendered="#{batchViewHandler.searchByRefId}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="arcRefId" value="Ref Id"/>
+												<prime:inputText id="arcRefId" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="arcRefId" display="icon" />
+											</h:panelGrid>
+										</h:panelGroup>
+										<h:panelGroup id="searchArcByJournalId" rendered="#{batchViewHandler.searchByJournalId}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="arcJournalId" value="Journal Id"/>
+												<prime:inputText id="arcJournalId" value="#{batchViewHandler.journalId}" required="true"/>
+												<prime:message for="arcJournalId" display="icon" />
+											</h:panelGrid>
+										</h:panelGroup>
+						 			</h:panelGroup>
 
 								<prime:spacer width="20px" />
 								
 								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
 									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.buttonActionJA}" id="btnSearchJA" update="jAId" style="margin-right:20px;" />
 								</h:panelGroup>
+								
+								<b:message for="dateFromJA" autoUpdate="true"/>
+								<b:message for="dateToJA" autoUpdate="true"/>
+								<b:message for="arcRefId" autoUpdate="true"/>
+								<b:message for="arcJournalId" autoUpdate="true"/>
+								</h:panelGroup>
 						 	</b:panel>
 						</b:accordion>
 						
-						<prime:dataTable value="#{batchViewHandler.glJournalQueueArchiveList}"
-							var="journalArchive" id="jAId" rowKey="#{journal.id}" paginator="true" rows="10">
-							
-							<prime:column id="jretry" headerText="Retry">#{journalArchive.retry}</prime:column>
-							<prime:column id="jref" headerText="Reference ID">#{journalArchive.refId}</prime:column>
-							<prime:column id="jmodule" headerText="Module">#{journalArchive.module}</prime:column>
-							<prime:column id="jmaker" headerText="Maker">#{journalArchive.maker}</prime:column>
-							<prime:column id="jchecker" headerText="Checker">#{journalArchive.checker}</prime:column>
-							<prime:column id="jcreateBy" headerText="Create By">#{journalArchive.createBy}</prime:column>
-							<prime:column id="jcreateDate" headerText="Create Date">
+						<prime:dataTable value="#{batchViewHandler.glJournalQueueArchiveList}" tableStyle="width:1340px"
+							var="journalArchive" id="jAId" rowKey="#{journal.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
+
+							<prime:column headerText="NO" style="width:40px">
+								<h:outputText value="#{index+1}"></h:outputText>
+							</prime:column>
+							<prime:column id="jretry" headerText="Retry" style="width:50px">#{journalArchive.retry}</prime:column>
+							<prime:column id="jref" headerText="Reference ID" sortBy="#{journalArchive.refId}" style="width:140px">#{journalArchive.refId}</prime:column>
+							<prime:column id="jmodule" headerText="Module" style="width:65px">#{journalArchive.module}</prime:column>
+							<prime:column id="jmaker" headerText="Maker" style="width:125px">#{journalArchive.maker}</prime:column>
+							<prime:column id="jchecker" headerText="Checker" style="width:125px">#{journalArchive.checker}</prime:column>
+							<prime:column id="jcreateBy" headerText="Create By" style="width:125px">#{journalArchive.createBy}</prime:column>
+							<prime:column id="jcreateDate" headerText="Create Date" sortBy="#{journalArchive.createDate}" style="width:140px">
 								<h:outputText value="#{journalArchive.createDate}">
 									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
 								</h:outputText>
 							</prime:column>
-							<prime:column id="jlastUpdateBy" headerText="Last Update By">#{journalArchive.lastUpdateBy}</prime:column>
-							<prime:column id="jlastUpdateDate" headerText="Last Update Date">
+							<prime:column id="jlastUpdateBy" headerText="Last Update By" style="width:125px">#{journalArchive.lastUpdateBy}</prime:column>
+							<prime:column id="jlastUpdateDate" headerText="Last Update Date" sortBy="#{journalArchive.lastUpdateDate}" style="width:140px">
 								<h:outputText value="#{journalArchive.lastUpdateDate}">
 									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
 								</h:outputText>
 							</prime:column>
-							<prime:column id="jProcessDate" headerText="Process Date">#{journalArchive.processDate}</prime:column>
-							<prime:column id="jFidJournal" headerText="FID Journal">#{journalArchive.fIdJournal}</prime:column>
+							<prime:column id="jProcessDate" headerText="Process Date" sortBy="#{journalArchive.processDate}" style="width:140px">
+								<h:outputText value="#{journalArchive.processDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+								</h:outputText>
+							</prime:column>
+							<prime:column id="jFidJournal" headerText="FID Journal" style="width:140px">#{journalArchive.fIdJournal}</prime:column>
 							
 							<!-- <prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
 							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
