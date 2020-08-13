@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">D:\\COREFINBATCH</Property>
+    </Properties>
+ 
+    <Appenders>
+        <RollingFile name="fileLogger" fileName="${basePath}/logs/corefin.batch.monitoring.log" filePattern="${basePath}/logs/$${date:yyyy-MM}/corefin.batch-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+        		<SizeBasedTriggeringPolicy size="25 MB"/>
+            </Policies>
+        </RollingFile>
+ 
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] [%t] [%c] - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.fid.wamessagepooling" level="debug" additivity="true">
+            <appender-ref ref="fileLogger" level="debug" />
+        </Logger>
+        <Root level="debug" additivity="false">
+            <appender-ref ref="console" />
+        </Root>
+    </Loggers>
+    <logger name="org.hibernate.SQL" additivity="false" >   
+	 <level value="DEBUG" />    
+	 <appender-ref ref="SQLROLLINGFILE" />
+	</logger>
+	
+	<logger name="org.hibernate.type" additivity="false" >
+	 <level value="TRACE" />
+	 <appender-ref ref="SQLROLLINGFILE" />
+	</logger>
+</Configuration>

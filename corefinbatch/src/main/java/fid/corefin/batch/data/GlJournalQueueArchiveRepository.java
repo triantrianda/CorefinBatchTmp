@@ -46,16 +46,16 @@ public class GlJournalQueueArchiveRepository extends BaseEntityRepository<GlJour
 	}
 	
 	public List<GlJournalQueueArchive> getGlJournalQueueArchiveByRefId(String refId) throws Exception{
-		String jpql = "SELECT p FROM GlJournalQueueArchive p WHERE p.refId=:id";
+		String jpql = "SELECT p FROM GlJournalQueueArchive p WHERE p.refId LIKE :id";
 		TypedQuery<GlJournalQueueArchive> typedQuery = entityManager.createQuery(jpql, GlJournalQueueArchive.class)
-				.setParameter("id", refId);
+				.setParameter("id","%"+ refId +"%");
 		return typedQuery.getResultList();
 	}
 	
 	public List<GlJournalQueueArchive> getGlJournalQueueArchiveByJournalId(String journalId) throws Exception{
-		String jpql = "SELECT p FROM GlJournalQueueArchive p WHERE p.fIdJournal=:id";
+		String jpql = "SELECT p FROM GlJournalQueueArchive p WHERE p.fIdJournal LIKE :id";
 		TypedQuery<GlJournalQueueArchive> typedQuery = entityManager.createQuery(jpql, GlJournalQueueArchive.class)
-				.setParameter("id", journalId);
+				.setParameter("id","%"+ journalId +"%");
 		return typedQuery.getResultList();
 	}
 	

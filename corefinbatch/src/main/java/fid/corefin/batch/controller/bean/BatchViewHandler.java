@@ -335,7 +335,7 @@ public class BatchViewHandler {
 		default:
 			break;
 		}
-		System.out.println("REFRESH ID : " + id);
+		//System.out.println("REFRESH ID : " + id);
 	}
 	
 	public void changeParamSearch(final AjaxBehaviorEvent event) {

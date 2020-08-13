@@ -65,9 +65,9 @@ public class GlJournalQueueRepository extends BaseEntityRepository<GlJournalQueu
 	}
 	
 	public List<GlJournalQueue> getGlJournalQueueByRefId(String refId) throws Exception{
-		String jpql = "SELECT p FROM GlJournalQueue p WHERE p.refId=:refId";
+		String jpql = "SELECT p FROM GlJournalQueue p WHERE p.refId LIKE :refId";
 		TypedQuery<GlJournalQueue> typedQuery = entityManager.createQuery(jpql, GlJournalQueue.class)
-				.setParameter("refId", refId);
+				.setParameter("refId","%" + refId + "%");
 		return typedQuery.getResultList();
 	}
 	

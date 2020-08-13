@@ -190,8 +190,10 @@ public class MessagePoolingMonitoringService implements Serializable {
 		if(CommonUtil.isNotNullOrEmpty(waSendUpdate)) {
 			for(WaSendTemplate waSend : waSendUpdate) {
 				if(waSend.getDate().compareTo(date) == 0) {
-					totalPlanSend = generalInfoRepository.getAllGeneralList().size();
-					waSend.setTotalPlanSendTemplate(totalPlanSend);
+					if(waSend.getTotalPlanSendTemplate() == 0) {
+						totalPlanSend = generalInfoRepository.getAllGeneralList().size();
+						waSend.setTotalPlanSendTemplate(totalPlanSend);
+					}
 					waSend.setTotalActualSendTemplate(getActualData(waSend.getDate(), waSendTemplate));
 					waSend = getStatusSend(waSend);
 					waSend.setDeviationData(waSend.getTotalPlanSendTemplate() - waSend.getTotalActualSendTemplate());
