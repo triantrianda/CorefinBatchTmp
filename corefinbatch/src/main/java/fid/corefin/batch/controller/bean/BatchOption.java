@@ -47,18 +47,30 @@ public class BatchOption implements Serializable {
 		
 		generalBatchInfoList.add(new GeneralBatchInfo("WA OTP", "Daily", "WAOTP"));
 		batchNames.add("WA OTP");
-		
-//		generalBatchInfoList.add(new GeneralBatchInfo("Monthly", "Monthly", "M"));
-//		batchNames.add("Monthly");
-//
-//		generalBatchInfoList.add(new GeneralBatchInfo("Daily", "Daily", "D"));
-//		batchNames.add("Daily");
 
 		generalBatchInfoList.add(new GeneralBatchInfo("Journal Queue", "Daily", "J"));
 		batchNames.add("Journal Queue");
 		
 		generalBatchInfoList.add(new GeneralBatchInfo("Journal Queue Archive", "Daily", "Ja"));
 		batchNames.add("Journal Queue Archive");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("Mobile Synchronize", "Daily", "MSYNC"));
+		batchNames.add("Mobile Synchronize");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("Mobile Synchronize Archive", "Daily", "MSYNCARC"));
+		batchNames.add("Mobile Synchronize Archive");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("Mobile Notification", "Daily", "MNOTIF"));
+		batchNames.add("Mobile Notification");
+		
+		generalBatchInfoList.add(new GeneralBatchInfo("Mobile Notification Archive", "Daily", "MNOTIFARC"));
+		batchNames.add("Mobile Notification Archive");
+		
+//		generalBatchInfoList.add(new GeneralBatchInfo("Monthly", "Monthly", "M"));
+//		batchNames.add("Monthly");
+//
+//		generalBatchInfoList.add(new GeneralBatchInfo("Daily", "Daily", "D"));
+//		batchNames.add("Daily");
 
 //		generalBatchInfoList.add(new GeneralBatchInfo("Data Syncronization", "Daily", "S"));
 //		batchNames.add("Data Syncronization");

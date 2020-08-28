@@ -28,6 +28,10 @@ import fid.corefin.batch.model.SynchBatch;
 
 import fid.corefin.batch.model.entity.GlJournalQueue;
 import fid.corefin.batch.model.entity.GlJournalQueueArchive;
+import fid.corefin.batch.model.entity.MobileNotification;
+import fid.corefin.batch.model.entity.MobileNotificationArchive;
+import fid.corefin.batch.model.entity.MobileSync;
+import fid.corefin.batch.model.entity.MobileSyncArchive;
 import fid.corefin.batch.service.BatchMonitoringService;
 import fid.corefin.batch.model.entity.WaOTP;
 import fid.corefin.batch.model.entity.WaPooling;
@@ -62,6 +66,14 @@ public class BatchViewHandler {
 	private List<WaOTP> messageOtpBatchList = new ArrayList<WaOTP>();
 	
 	private List<WaSendTemplate> messageSendTemplateBatchList = new ArrayList<WaSendTemplate>();
+	
+	private List<MobileSync> mobileSyncList = new ArrayList<MobileSync>();
+
+	private List<MobileSyncArchive> mobileSyncArchiveList = new ArrayList<MobileSyncArchive>();
+	
+	private List<MobileNotification> mobileNotificationList = new ArrayList<MobileNotification>();
+	
+	private List<MobileNotificationArchive> mobileNotificationArchiveList = new ArrayList<MobileNotificationArchive>();
 
 	private TreeNode selectedNode;
 
@@ -76,6 +88,10 @@ public class BatchViewHandler {
 	private boolean showJournal;
 	
 	private boolean showJournalArchive;
+	private boolean showMobileSync;
+	private boolean showMobileSyncArchive;
+	private boolean showMobileNotif;
+	private boolean showMobileNotifArchive;
 
 	private boolean showMDBatch;
 
@@ -97,10 +113,13 @@ public class BatchViewHandler {
     private boolean searchByModule;
     private boolean searchByRefId;
     private boolean searchByJournalId;
+    private boolean searchByStatementText;
+    private boolean searchByParameter;
     private final String DefaultSearch = "MODULE";
     
 
 	DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	@ManagedProperty("#{batchOption}")
 	private BatchOption batchOption;
@@ -152,6 +171,22 @@ public class BatchViewHandler {
 	public boolean isShowNotifMPos() {
 		return showNotifMPos;
 	}
+	
+	public boolean isShowMobileSync() {
+		return showMobileSync;
+	}
+	
+	public boolean isShowMobileSyncArchive() {
+		return showMobileSyncArchive;
+	}
+	
+	public boolean isShowMobileNotif() {
+		return showMobileNotif;
+	}
+	
+	public boolean isShowMobileNotifArchive() {
+		return showMobileNotifArchive;
+	}
 
 	public List<GeneralBatchInfo> getGeneralBatchInfoList() {
 		return generalBatchInfoList;
@@ -177,7 +212,14 @@ public class BatchViewHandler {
 		return searchByJournalId;
 	}
 	
-	@SuppressWarnings("unused")
+	public boolean isSearchByStatementText() {
+		return searchByStatementText;
+	}
+	
+	public boolean isSearchByParameter() {
+		return searchByParameter;
+	}
+	
 	public void onNodeSelect(NodeSelectEvent event) throws Exception {
 		showMessagePooling = false;
 		showMessageSendTemplate = false;
@@ -185,6 +227,10 @@ public class BatchViewHandler {
 		showGeneral = false;
 		showJournal = false;
 		showJournalArchive = false;
+		showMobileSync = false;
+		showMobileSyncArchive = false;
+		showMobileNotif = false;
+		showMobileNotifArchive = false;
 		showMDBatch = false;
 		showNotifMColl = false;
 		showNotifMPos = false;
@@ -198,6 +244,8 @@ public class BatchViewHandler {
 		searchByModule = true;
 		searchByRefId = false;
 		searchByJournalId = false;
+		searchByStatementText = false;
+		searchByParameter = false;
 		selectedSearchType = DefaultSearch;
 		
 		/*
@@ -241,6 +289,22 @@ public class BatchViewHandler {
 			case "Journal Queue Archive":
 				showJournalArchive = true;
 				glJournalQueueArchiveList = batchMonitoringService.getGlJournalQueueArchive(dateFormat.format(date));
+				break;
+			case "Mobile Synchronize":
+				showMobileSync = true;
+				mobileSyncList = batchMonitoringService.getMobileSyncCurrentDate(sdf.parse(sdf.format(date)));
+				break;	
+			case "Mobile Synchronize Archive":
+				showMobileSyncArchive = true;
+				mobileSyncArchiveList = batchMonitoringService.getMobileSyncArcCurrentDate(sdf.parse(sdf.format(date)));
+				break;
+			case "Mobile Notification":
+				showMobileNotif = true;
+				mobileNotificationList = batchMonitoringService.getMobileNotifCurrentDate(sdf.parse(sdf.format(date)));
+				break;
+			case "Mobile Notification Archive":
+				showMobileNotifArchive = true;
+				mobileNotificationArchiveList = batchMonitoringService.getMobileNotifArchiveCurrentDate(sdf.parse(sdf.format(date)));
 				break;
 			case "Daily":
 				showMDBatch = true;
@@ -286,7 +350,6 @@ public class BatchViewHandler {
 			}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -310,7 +373,78 @@ public class BatchViewHandler {
 			}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void search(ActionEvent ae) {
+		try {
+			String param = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("searchParam");
+			switch (param) {
+			case "MobileSync":
+				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+					if(!validate()) {
+						mobileSyncList = batchMonitoringService.getMobileSyncByExecutionDate(date1, date2);
+					}
+				} else {
+					mobileSyncList = batchMonitoringService.getMobileSyncByStatement(refId);
+				}
+				break;
+			case "MobileSyncArchive":
+				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+					if(!validate()) {
+						mobileSyncArchiveList = batchMonitoringService.getMobileSyncArcByExecutionDate(date1, date2);
+					} 
+				} else {
+					mobileSyncArchiveList = batchMonitoringService.getMobileSyncArcByStatement(refId);
+					}
+				break;
+			case "MobileNotification":
+				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+					if(!validate()) {
+						mobileNotificationList = batchMonitoringService.getMobileNotifCustomDate(date1, date2);
+					}
+				} else {
+					mobileNotificationList = batchMonitoringService.getMobileNotifByParam(refId);
+				}
+				break;
+			case "MobileNotificationArchive":
+				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+					if(!validate()) {
+						mobileNotificationArchiveList = batchMonitoringService.getMobileNotifArchiveCustomDate(date1, date2);
+					}
+				} else {
+					mobileNotificationArchiveList = batchMonitoringService.getMobileNotifArchiveByParam(param);
+				}
+				break;
+			default:
+				break;
+			}
+			
+//			if(param.equalsIgnoreCase("MobileSync")) {
+//				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+//					if(date1.compareTo(date2) > 0) {
+//						FacesContext.getCurrentInstance().addMessage("formID:dateFromMSync", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Date From cannot greater then Date To."));
+//					} else {
+//						mobileSyncList = batchMonitoringService.getMobileSyncByExecutionDate(date1, date2);
+//					}
+//				} else {
+//					mobileSyncList = batchMonitoringService.getMobileSyncByStatement(refId);
+//				}
+//			} else {
+//				if(selectedSearchType.equalsIgnoreCase(DefaultSearch)) {
+//					if(date1.compareTo(date2) > 0) {
+//						FacesContext.getCurrentInstance().addMessage("formID:dateFromMSync", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Date From cannot greater then Date To."));
+//					} else {
+//						mobileSyncArchiveList = batchMonitoringService.getMobileSyncArcByExecutionDate(date1, date2);
+//					}
+//				} else {
+//					mobileSyncArchiveList = batchMonitoringService.getMobileSyncArcByStatement(refId);
+//				}
+//			}
+			
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -343,15 +477,43 @@ public class BatchViewHandler {
 			searchByModule = true;
 			searchByRefId = false;
 			searchByJournalId = false;
+			searchByStatementText = false;
+			searchByParameter = false;
 		} else if (selectedSearchType.equalsIgnoreCase("RefId")){
 			searchByModule = false;
 			searchByRefId = true;
 			searchByJournalId = false;
-		} else {
+			searchByStatementText = false;
+			searchByParameter = false;
+		} else if (selectedSearchType.equalsIgnoreCase("JournalId")){
 			searchByModule = false;
 			searchByRefId = false;
 			searchByJournalId = true;
+			searchByStatementText = false;
+			searchByParameter = false;
+		} else if(selectedSearchType.equalsIgnoreCase("StatementText")){
+			searchByModule = false;
+			searchByRefId = false;
+			searchByJournalId = false;
+			searchByStatementText = true;
+			searchByParameter = false;
+		} else if(selectedSearchType.equalsIgnoreCase("Parameter")) {
+			searchByModule = false;
+			searchByRefId = false;
+			searchByJournalId = false;
+			searchByStatementText = false;
+			searchByParameter = true;
 		}
+	}
+	
+	public boolean validate() {
+		boolean result = false;
+		if(date1.compareTo(date2) > 0) {
+			FacesContext.getCurrentInstance()
+			.addMessage("formID:dateFromMSync", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Date From cannot greater then Date To."));
+			result = true;
+		}
+		return result;
 	}
 
 	public List<JournalBatch> getJournalQueueList() {
@@ -456,6 +618,38 @@ public class BatchViewHandler {
 	
 	public List<WaSendTemplate> getMessageSendTemplateBatchList() {
 		return messageSendTemplateBatchList;
+	}
+	
+	public List<MobileSync> getMobileSyncList() {
+		return mobileSyncList;
+	}
+
+	public void setMobileSyncList(List<MobileSync> mobileSyncList) {
+		this.mobileSyncList = mobileSyncList;
+	}
+
+	public List<MobileSyncArchive> getMobileSyncArchiveList() {
+		return mobileSyncArchiveList;
+	}
+
+	public void setMobileSyncArchiveList(List<MobileSyncArchive> mobileSyncArchiveList) {
+		this.mobileSyncArchiveList = mobileSyncArchiveList;
+	}
+	
+	public List<MobileNotification> getMobileNotificationList() {
+		return mobileNotificationList;
+	}
+
+	public void setMobileNotificationList(List<MobileNotification> mobileNotificationList) {
+		this.mobileNotificationList = mobileNotificationList;
+	}
+
+	public List<MobileNotificationArchive> getMobileNotificationArchiveList() {
+		return mobileNotificationArchiveList;
+	}
+
+	public void setMobileNotificationArchiveList(List<MobileNotificationArchive> mobileNotificationArchiveList) {
+		this.mobileNotificationArchiveList = mobileNotificationArchiveList;
 	}
 	
 	public BatchMonitoringService getBatchMonitoringService() {

@@ -2,26 +2,28 @@ package fid.corefin.batch.service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.apache.logging.log4j.Logger;
 
 import fid.corefin.batch.data.GlJournalQueueRepository;
+import fid.corefin.batch.data.MobileNotificationArchiveRepository;
+import fid.corefin.batch.data.MobileNotificationRepository;
+import fid.corefin.batch.data.MobileSyncArchiveRepository;
+import fid.corefin.batch.data.MobileSyncRepository;
 import fid.corefin.batch.data.GlJournalQueueArchiveRepository;
 import fid.corefin.batch.model.entity.GlJournalQueue;
 import fid.corefin.batch.model.entity.GlJournalQueueArchive;
+import fid.corefin.batch.model.entity.MobileNotification;
+import fid.corefin.batch.model.entity.MobileNotificationArchive;
+import fid.corefin.batch.model.entity.MobileSync;
+import fid.corefin.batch.model.entity.MobileSyncArchive;
 import fid.corefin.batch.util.CommonUtil;
 
 @Singleton
@@ -38,6 +40,18 @@ public class BatchMonitoringService implements Serializable {
 	
 	@Inject
 	private GlJournalQueueArchiveRepository glJournalQueueArchiveRepository;
+	
+	@Inject 
+	private MobileSyncRepository mobileSyncRepository;
+	
+	@Inject
+	private MobileSyncArchiveRepository mobileSyncArchiveRepository;
+	
+	@Inject
+	private MobileNotificationRepository mobileNotificationRepository;
+	
+	@Inject
+	private MobileNotificationArchiveRepository mobileNotificationArchiveRepository;
 	
 	@Inject
 	private Logger logger;
@@ -163,6 +177,150 @@ public class BatchMonitoringService implements Serializable {
 		}catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Gl Journal Queue Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSync> getMobileSyncCurrentDate(Date date) throws Exception {
+		try {
+			Date nextDate = getNextDay(date, 1);
+			String dateMillis = String.valueOf(date.getTime());
+			String nextDateMillis = String.valueOf(nextDate.getTime());
+			List<MobileSync> listData = mobileSyncRepository.getMobileSyncByExecutionDate(dateMillis, nextDateMillis);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSync> getMobileSyncByExecutionDate(Date from, Date to) throws Exception {
+		try {
+			Date nextDate = getNextDay(to, 1);
+			String fromMilis = String.valueOf(from.getTime());
+			String toMilis = String.valueOf(nextDate.getTime());
+			List<MobileSync> listData = mobileSyncRepository.getMobileSyncByExecutionDate(fromMilis, toMilis);
+			return listData;
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSync> getMobileSyncByStatement(String refId) throws Exception {
+		try {
+			List<MobileSync> listData = mobileSyncRepository.getMobileSyncByStatement(refId);
+			return listData;
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSyncArchive> getMobileSyncArcCurrentDate(Date date) throws Exception {
+		try {
+			Date nextDate = getNextDay(date, 1);
+			String dateMillis = String.valueOf(date.getTime());
+			String nextDateMillis = String.valueOf(nextDate.getTime());
+			List<MobileSyncArchive> listData = mobileSyncArchiveRepository.getMobileSyncArcByExecutionDate(dateMillis, nextDateMillis);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSyncArchive> getMobileSyncArcByExecutionDate(Date from, Date to) throws Exception {
+		try {
+			Date nextDate = getNextDay(to, 1);
+			String fromMilis = String.valueOf(from.getTime());
+			String toMilis = String.valueOf(nextDate.getTime());
+			List<MobileSyncArchive> listData = mobileSyncArchiveRepository.getMobileSyncArcByExecutionDate(fromMilis, toMilis);
+			return listData;
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileSyncArchive> getMobileSyncArcByStatement(String refId) throws Exception {
+		try {
+			List<MobileSyncArchive> listData = mobileSyncArchiveRepository.getMobileSyncArcByStatement(refId);
+			return listData;
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Synchronize Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotification> getMobileNotifCurrentDate(Date date) throws Exception {
+		try {
+			List<MobileNotification> listData = mobileNotificationRepository.getMobileNotificationByDate(date);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotification> getMobileNotifByParam(String param) throws Exception {
+		try {
+			List<MobileNotification> listData = mobileNotificationRepository.getMobileNotificationByParam(param);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotification> getMobileNotifCustomDate(Date dateFrom, Date dateTo) throws Exception {
+		try {
+			List<MobileNotification> listData = mobileNotificationRepository.getMobileNotificationByDate(dateFrom, dateTo);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotificationArchive> getMobileNotifArchiveCurrentDate(Date date) throws Exception {
+		try {
+			List<MobileNotificationArchive> listData = mobileNotificationArchiveRepository.getMobileNotificationArchiveByDate(date);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotificationArchive> getMobileNotifArchiveCustomDate(Date dateFrom, Date dateTo) throws Exception {
+		try {
+			List<MobileNotificationArchive> listData = mobileNotificationArchiveRepository.getMobileNotificationArchiveByDate(dateFrom, dateTo);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification Archive || " + e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<MobileNotificationArchive> getMobileNotifArchiveByParam(String param) throws Exception {
+		try {
+			List<MobileNotificationArchive> listData = mobileNotificationArchiveRepository.getMobileNotificationArchiveByParam(param);
+			return listData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Mobile Notification Archive || " + e.getMessage());
 			throw e;
 		}
 	}
@@ -372,6 +530,7 @@ public class BatchMonitoringService implements Serializable {
 			this.val = val;
 		}
 		
+		@SuppressWarnings("unused")
 		public static Module valOf(String prm) {
 	        if (prm.equals(Module.VaPayment.getVal())) {
 	            return Module.VaPayment;
@@ -458,6 +617,13 @@ public class BatchMonitoringService implements Serializable {
 	        return listOf;
 	    }
 	    
+	}
+	
+	public Date getNextDay(Date date, int day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, day);
+		return cal.getTime();
 	}
 	
 }

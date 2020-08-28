@@ -341,148 +341,353 @@ table {
 								</h:outputText>
 							</prime:column>
 							<prime:column id="jFidJournal" headerText="FID Journal" style="width:140px">#{journalArchive.fIdJournal}</prime:column>
-							
-							<!-- <prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
-							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
-							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
-							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
-							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
-							<prime:column id="jcreateDate" headerText="Create Date">
-								<h:outputText value="#{journal.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column> -->
 						</prime:dataTable>
-						<prime:commandButton value="Refresh" actionListener="#{batchViewHandler.refreshBatchInfo('jAId')}" update="jAId"></prime:commandButton>
 					</b:panel>
 					<!-- end add -->
-					<!-- <b:panel rendered="#{batchViewHandler.showJournal}">
-						<prime:dataTable value="#{batchViewHandler.journalQueueList}"
-							var="journal" id="jId2" rowKey="#{journal.id}" paginator="true"
-							rows="10">
-							<prime:column id="jjournalId" headerText="ID">#{journal.id}</prime:column>
-							<prime:column id="jretry" headerText="Retry">#{journal.retry}</prime:column>
-							<prime:column id="jref" headerText="Reference ID">#{journal.refId}</prime:column>
-							<prime:column id="jmodule" headerText="Module">#{journal.module}</prime:column>
-							<prime:column id="jcreateBy" headerText="Create By">#{journal.createBy}</prime:column>
-							<prime:column id="jcreateDate" headerText="Create Date">
-								<h:outputText value="#{journal.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+					
+					<!-- add mobile sync -->
+					<b:panel rendered="#{batchViewHandler.showMobileSync}">
+						<b:accordion>
+							<b:panel id="pnlSearchMobSync" title="Search">
+								<h:panelGroup id="searchMobSync" styleClass="fieldPackage" style="display: block">
+									<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParamMSync"/>
+											<prime:selectOneMenu id="searchParamMSync" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="searchMobSync" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Execution Date" itemValue="Module"/>
+												<f:selectItem itemLabel="Statement Text" itemValue="StatementText"/>
+											</prime:selectOneMenu>
+										</h:panelGrid>
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup id="searchByExecDate" rendered="#{batchViewHandler.searchByModule}">
+									<h:panelGrid columns="3">
+								 		<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+								 			<prime:outputLabel style="width:80px" for="dateFromMSync" value="Date From" />
+											<prime:calendar id="dateFromMSync" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+								 			</h:panelGrid>
+								 			<prime:spacer width="4"/>
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:30px" for="dateToMSync" value="To" />
+											<prime:calendar id="dateToMSync" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+											</h:panelGrid>
+								 		</h:panelGrid>
+								 	</h:panelGroup>
+								 	<h:panelGroup id="searchByStatementText" rendered="#{batchViewHandler.searchByStatementText}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="statementText" value="Statement Text"/>
+												<prime:inputTextarea id="statementText" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="statementText" display="icon" />
+											</h:panelGrid>
+										</h:panelGroup>
+								<prime:spacer width="20px" />
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.search}" id="btnSearchMSync" update="dtMobileSync" style="margin-right:20px;">
+										<f:param name="searchParam" value="MobileSync"></f:param>
+									</prime:commandButton>
+								</h:panelGroup>
+								<b:message for="statementText" autoUpdate="true" />
+								<b:message for="dateFromMSync" autoUpdate="true" />
+								<b:message for="dateToMSync" autoUpdate="true" />
+								</h:panelGroup>
+							</b:panel>
+						</b:accordion>
+						<prime:dataTable value="#{batchViewHandler.mobileSyncList}" tableStyle="width:1185px" resizableColumns="false"
+							scrollable="false" scrollHeight="300"
+							var="mobileSync" id="dtMobileSync" rowKey="#{mobileSync.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
+							
+							<prime:column headerText="No" style="width:30px">
+								<h:outputText value="#{index+1}"></h:outputText>
+							</prime:column>
+							<prime:column id="mBatchCode" headerText="Batch Code" style="width:190px">#{mobileSync.batchCode}</prime:column>
+							<prime:column id="mExecDate" headerText="Execution Date" style="width:120px">
+								<h:outputText value="#{mobileSync.dateFromExecutionDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
 								</h:outputText>
 							</prime:column>
-							<prime:column id="jprior" headerText="Priority">#{journal.priority}</prime:column>
+							<prime:column id="mRunningStatus" headerText="Running Status" style="width:80px">#{mobileSync.runningStatus}</prime:column>
+							<prime:column id="mLookup" headerText="Lookup Narrative" style="width:125px">#{mobileSync.lookupNarrative}</prime:column>
+							<prime:column id="mStatementId" headerText="Statement Id" style="width:75px">#{mobileSync.statementId}</prime:column>
+							<prime:column id="mStatementText" headerText="Statement Text" style="width:1000px">#{mobileSync.statementText}</prime:column>
+							<prime:column id="mStatus" headerText="Status" style="width:60px">#{mobileSync.status}</prime:column>
+							<prime:column id="mPriority" headerText="Priority" style="width:60px">#{mobileSync.priority}</prime:column>
+							<prime:column id="mRetry" headerText="Retry" style="width:60px">#{mobileSync.retry}</prime:column>
+							<prime:column id="mCreateBy" headerText="Create By" style="width:60px">#{mobileSync.createBy}</prime:column>
+							<prime:column id="mCreateDate" headerText="Create Date" style="width:100px">
+								<h:outputText value="#{mobileSync.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column id="mResponse" headerText="Response" style="width:80px">#{mobileSync.response}</prime:column>
+							<prime:column id="mResponseStatus" headerText="Response Status" style="width:80px">#{mobileSync.priority}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('jId2')}"
-							update="jId2"></prime:commandButton>
+					</b:panel>	
+					
+					<!-- add mobile sync archive-->
+					<b:panel rendered="#{batchViewHandler.showMobileSyncArchive}">
+						<b:accordion>
+							<b:panel id="pnlSearchMobSyncArc" title="Search">
+								<h:panelGroup id="searchMobSyncArc" styleClass="fieldPackage" style="display: block">
+									<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParamMSyncArc"/>
+											<prime:selectOneMenu id="searchParamMSyncArc" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="searchMobSyncArc" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Execution Date" itemValue="Module"/>
+												<f:selectItem itemLabel="Statement Text" itemValue="StatementText"/>
+											</prime:selectOneMenu>
+										</h:panelGrid>
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup rendered="#{batchViewHandler.searchByModule}">
+									<h:panelGrid columns="3">
+								 		<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+								 			<prime:outputLabel style="width:80px" for="dateFromMSyncArc" value="Date From" />
+											<prime:calendar id="dateFromMSyncArc" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+								 			</h:panelGrid>
+								 			<prime:spacer width="4"/>
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:30px" for="dateToMSyncArc" value="To" />
+											<prime:calendar id="dateToMSyncArc" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+											</h:panelGrid>
+								 		</h:panelGrid>
+								 	</h:panelGroup>
+								 	<h:panelGroup rendered="#{batchViewHandler.searchByStatementText}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="statementTextArc" value="Statement Text"/>
+												<prime:inputTextarea id="statementTextArc" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="statementText" display="icon" />
+											</h:panelGrid>
+										</h:panelGroup>
+								<prime:spacer width="20px" />
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.search}" id="btnSearchMSyncArc" update="dtMobileSyncArc" style="margin-right:20px;">
+										<f:param name="searchParam" value="MobileSyncArchive"></f:param>
+									</prime:commandButton>
+								</h:panelGroup>
+								<b:message for="statementTextArc" autoUpdate="true" />
+								<b:message for="dateFromMSyncArc" autoUpdate="true" />
+								<b:message for="dateToMSyncArc" autoUpdate="true" />
+								</h:panelGroup>
+							</b:panel>
+						</b:accordion>
+						<prime:dataTable value="#{batchViewHandler.mobileSyncArchiveList}" tableStyle="width:1185px" resizableColumns="false"
+							scrollable="false" scrollHeight="300"
+							var="mobileSyncArc" id="dtMobileSyncArc" rowKey="#{mobileSync.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
+							
+							<prime:column headerText="No" style="width:30px">
+								<h:outputText value="#{index+1}"></h:outputText>
+							</prime:column>
+							<prime:column id="mBatchCode" headerText="Batch Code" style="width:190px">#{mobileSyncArc.batchCode}</prime:column>
+							<prime:column id="mExecDate" headerText="Execution Date" style="width:120px">
+								<h:outputText value="#{mobileSyncArc.dateFromExecutionDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column id="mRunningStatus" headerText="Running Status" style="width:80px">#{mobileSyncArc.runningStatus}</prime:column>
+							<prime:column id="mLookup" headerText="Lookup Narrative" style="width:125px">#{mobileSyncArc.lookupNarrative}</prime:column>
+							<prime:column id="mStatementId" headerText="Statement Id" style="width:75px">#{mobileSyncArc.statementId}</prime:column>
+							<prime:column id="mStatementText" headerText="Statement Text" style="width:1000px">#{mobileSyncArc.statementText}</prime:column>
+							<prime:column id="mStatus" headerText="Status" style="width:60px">#{mobileSyncArc.status}</prime:column>
+							<prime:column id="mPriority" headerText="Priority" style="width:60px">#{mobileSyncArc.priority}</prime:column>
+							<prime:column id="mRetry" headerText="Retry" style="width:60px">#{mobileSyncArc.retry}</prime:column>
+							<prime:column id="mProcessDate" headerText="Process Date" style="width:100px">
+								<h:outputText value="#{mobileSyncArc.processedDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column id="mCreateBy" headerText="Create By" style="width:60px">#{mobileSyncArc.createBy}</prime:column>
+							<prime:column id="mCreateDate" headerText="Create Date" style="width:100px">
+								<h:outputText value="#{mobileSyncArc.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column id="mResponse" headerText="Response" style="width:80px">#{mobileSyncArc.response}</prime:column>
+							<prime:column id="mResponseStatus" headerText="Response Status" style="width:80px">#{mobileSyncArc.priority}</prime:column>
+						</prime:dataTable>
+					</b:panel>	
+					
+					<!-- add mobile notification-->
+					<b:panel rendered="#{batchViewHandler.showMobileNotif}">
+						<b:accordion>
+							<b:panel id="pnlSearchMobNotif" title="Search">
+								<h:panelGroup id="searchMobNotif" styleClass="fieldPackage" style="display: block">
+									<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParamMNotif"/>
+											<prime:selectOneMenu id="searchParamMNotif" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="searchMobNotif" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Date" itemValue="Module"/>
+												<f:selectItem itemLabel="Parameter" itemValue="Parameter"/>
+											</prime:selectOneMenu>
+										</h:panelGrid>
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup rendered="#{batchViewHandler.searchByModule}">
+									<h:panelGrid columns="3">
+								 		<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+								 			<prime:outputLabel style="width:80px" for="dateFromMNotif" value="Date From" />
+											<prime:calendar id="dateFromMNotif" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+								 			</h:panelGrid>
+								 			<prime:spacer width="4"/>
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:30px" for="dateToMNotif" value="To" />
+											<prime:calendar id="dateToMNotif" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+											</h:panelGrid>
+								 		</h:panelGrid>
+								 	</h:panelGroup>
+								 	<h:panelGroup rendered="#{batchViewHandler.searchByParameter}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="parameter" value="Parameter"/>
+												<prime:inputText id="parameter" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="parameter" display="icon" />
+											</h:panelGrid>
+									</h:panelGroup>
+								<prime:spacer width="20px" />
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.search}" id="btnSearchMNotif" update="dtMobileNotif" style="margin-right:20px;">
+										<f:param name="searchParam" value="MobileNotification"></f:param>
+									</prime:commandButton>
+								</h:panelGroup>
+								<b:message for="parameter" autoUpdate="true" />
+								<b:message for="dateFromMNotif" autoUpdate="true" />
+								<b:message for="dateToMNotif" autoUpdate="true" />
+								</h:panelGroup>
+							</b:panel>
+						</b:accordion>
+						<prime:dataTable value="#{batchViewHandler.mobileNotificationList}" tableStyle="width:1185px" resizableColumns="false"
+							scrollable="false" scrollHeight="300"
+							var="mobileNotif" id="dtMobileNotif" rowKey="#{mobileNotif.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
+							
+							<prime:column headerText="No" style="width:30px">
+								<h:outputText value="#{index+1}"></h:outputText>
+							</prime:column>
+							<prime:column headerText="Fid User" style="width:100px">#{mobileNotif.fidUser}</prime:column>
+							<prime:column headerText="Status Notif" style="width:100px">#{mobileNotif.statusNotif}</prime:column>
+							<prime:column headerText="Parameter" style="width:150px">#{mobileNotif.parameter}</prime:column>
+							<prime:column headerText="Text" style="width:170px">#{mobileNotif.text}</prime:column>
+							<prime:column headerText="Title" style="width:60px">#{mobileNotif.title}</prime:column>
+							<prime:column headerText="Action Type" style="width:130px">#{mobileNotif.actionType}</prime:column>
+							<prime:column headerText="Active Ind" style="width:60px">#{mobileNotif.activeInd}</prime:column>
+							<prime:column headerText="Priority" style="width:60px">#{mobileNotif.priority}</prime:column>
+							<prime:column headerText="Retry" style="width:60px">#{mobileNotif.retry}</prime:column>
+							<prime:column headerText="Status" style="width:60px">#{mobileNotif.status}</prime:column>
+							<prime:column headerText="Create By" style="width:80px">#{mobileNotif.createBy}</prime:column>
+							<prime:column headerText="Create Date" style="width:100px">
+								<h:outputText value="#{mobileNotif.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column headerText="Last Update By" style="width:100px">#{mobileNotif.lastUpdateBy}</prime:column>
+							<prime:column headerText="Last Update Date" style="width:120px">
+								<h:outputText value="#{mobileNotif.lastUpdateDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+								</h:outputText>
+							</prime:column>
+							<prime:column headerText="Response" style="width:250px">#{mobileNotif.response}</prime:column>
+							<prime:column headerText="Response Status" style="width:80px">#{mobileNotif.responseStatus}</prime:column>
+						</prime:dataTable>
 					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showMDBatch}">
-						<prime:dataTable value="#{batchViewHandler.dmBatchList}" var="dm"
-							id="dmId" rowKey="#{dm.id}" paginator="true" rows="10">
-							<prime:column id="dmId" headerText="Batch ID">#{dm.id}</prime:column>
-							<prime:column id="description" headerText="Batch Name">#{dm.description}</prime:column>
-							<prime:column id="sequence" headerText="Sequence">#{dm.sequence}</prime:column>
-							<prime:column id="start" headerText="Hour Start">#{dm.start}</prime:column>
-							<prime:column id="end" headerText="Hour End">#{dm.end}</prime:column>
-							<prime:column id="dateExec" headerText="Execution Date">
-								<h:outputText value="#{dm.dateExecution}" />
+					<!-- add mobile notification archive-->
+					<b:panel rendered="#{batchViewHandler.showMobileNotifArchive}">
+						<b:accordion>
+							<b:panel id="pnlSearchMobNotifArc" title="Search">
+								<h:panelGroup id="searchMobNotifArc" styleClass="fieldPackage" style="display: block">
+									<h:panelGrid columns="1" cellspacing="15" columnClasses="vmid,vmid">
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:80px" value="Search By" for="searchParamMNotifArc"/>
+											<prime:selectOneMenu id="searchParamMNotifArc" value="#{batchViewHandler.selectedSearchType}">
+												<prime:ajax event="change" update="searchMobNotifArc" 
+													listener="#{batchViewHandler.changeParamSearch}" />
+												<f:selectItem itemLabel="Date" itemValue="Module"/>
+												<f:selectItem itemLabel="Parameter" itemValue="Parameter"/>
+											</prime:selectOneMenu>
+										</h:panelGrid>
+									</h:panelGrid>
+									<prime:spacer height="10" width="2"/>
+									<h:panelGroup rendered="#{batchViewHandler.searchByModule}">
+									<h:panelGrid columns="3">
+								 		<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+								 			<prime:outputLabel style="width:80px" for="dateFromMNotifArc" value="Date From" />
+											<prime:calendar id="dateFromMNotifArc" value="#{batchViewHandler.date1}" pattern="yyyy/MM/dd" required="true" />
+								 			</h:panelGrid>
+								 			<prime:spacer width="4"/>
+										<h:panelGrid columns="2" columnClasses="vmidleft,vmid">
+											<prime:outputLabel style="width:30px" for="dateToMNotifArc" value="To" />
+											<prime:calendar id="dateToMNotifArc" value="#{batchViewHandler.date2}" pattern="yyyy/MM/dd" required="true" />
+											</h:panelGrid>
+								 		</h:panelGrid>
+								 	</h:panelGroup>
+								 	<h:panelGroup rendered="#{batchViewHandler.searchByParameter}">
+											<h:panelGrid columns="3" columnClasses="vmidleft,vmid,vmid">
+												<prime:outputLabel style="width:80px" for="parameterArc" value="Parameter"/>
+												<prime:inputText id="parameterArc" value="#{batchViewHandler.refId}" required="true"/>
+												<prime:message for="parameterArc" display="icon" />
+											</h:panelGrid>
+									</h:panelGroup>
+								<prime:spacer width="20px" />
+								<h:panelGroup styleClass="fieldPackage" style="width: 215px" layout="block">
+									<prime:commandButton value="Search" title="Search" actionListener="#{batchViewHandler.search}" id="btnSearchMNotifArc" update="dtMobileNotifArc" style="margin-right:20px;">
+										<f:param name="searchParam" value="MobileNotificationArchive"></f:param>
+									</prime:commandButton>
+								</h:panelGroup>
+								<b:message for="parameterArc" autoUpdate="true" />
+								<b:message for="dateFromMNotifArc" autoUpdate="true" />
+								<b:message for="dateToMNotifArc" autoUpdate="true" />
+								</h:panelGroup>
+							</b:panel>
+						</b:accordion>
+						<prime:dataTable value="#{batchViewHandler.mobileNotificationArchiveList}" tableStyle="width:1185px" resizableColumns="false"
+							scrollable="false" scrollHeight="300"
+							var="mobileNotifArc" id="dtMobileNotifArc" rowKey="#{mobileNotifArc.id}" paginator="true" rows="10" 
+							currentPageReportTemplate="Showing {startRecord}-{endRecord} of {totalRecords}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom" rowIndexVar="index">
+							
+							<prime:column headerText="No" style="width:30px">
+								<h:outputText value="#{index+1}"></h:outputText>
 							</prime:column>
-							<prime:column id="execStart" headerText="Execution Start">
-								<h:outputText value="#{dm.executionStart}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+							<prime:column headerText="Fid User" style="width:100px">#{mobileNotifArc.fidUser}</prime:column>
+							<prime:column headerText="Status Notif" style="width:100px">#{mobileNotifArc.statusNotif}</prime:column>
+							<prime:column headerText="Parameter" style="width:150px">#{mobileNotifArc.parameter}</prime:column>
+							<prime:column headerText="Text" style="width:170px">#{mobileNotifArc.text}</prime:column>
+							<prime:column headerText="Title" style="width:60px">#{mobileNotifArc.title}</prime:column>
+							<prime:column headerText="Action Type" style="width:130px">#{mobileNotifArc.actionType}</prime:column>
+							<prime:column headerText="Active Ind" style="width:60px">#{mobileNotifArc.activeInd}</prime:column>
+							<prime:column headerText="Priority" style="width:60px">#{mobileNotifArc.priority}</prime:column>
+							<prime:column headerText="Retry" style="width:60px">#{mobileNotifArc.retry}</prime:column>
+							<prime:column headerText="Status" style="width:60px">#{mobileNotifArc.status}</prime:column>
+							<prime:column headerText="Create By" style="width:80px">#{mobileNotifArc.createBy}</prime:column>
+							<prime:column headerText="Create Date" style="width:100px">
+								<h:outputText value="#{mobileNotifArc.createDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
 								</h:outputText>
 							</prime:column>
-							<prime:column id="execEnd" headerText="Execution End">
-								<h:outputText value="#{dm.executionEnd}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
+							<prime:column headerText="Last Update By" style="width:100px">#{mobileNotifArc.lastUpdateBy}</prime:column>
+							<prime:column headerText="Last Update Date" style="width:120px">
+								<h:outputText value="#{mobileNotifArc.lastUpdateDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
 								</h:outputText>
 							</prime:column>
-							<prime:column id="executionInfo" headerText="Status">#{dm.information}</prime:column>
+							<prime:column headerText="Response" style="width:500px">#{mobileNotifArc.response}</prime:column>
+							<prime:column headerText="Response Status" style="width:100px">#{mobileNotifArc.responseStatus}</prime:column>
 						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('dmId')}"
-							update="dmId"></prime:commandButton>
 					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showSynch}">
-						<prime:dataTable value="#{batchViewHandler.synchBatchList}"
-							var="s" id="sId" rowKey="#{s.batchCode}" paginator="true"
-							rows="10">
-							<prime:column id="bacthCode" headerText="Batch Code">#{s.batchCode}</prime:column>
-							<prime:column id="execDate" headerText="Execution Date">
-								<h:outputText value="#{s.executionDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-							<prime:column id="lookupNarative" headerText="Narative">#{s.lookupNarrative}</prime:column>
-							<prime:column id="statementId" headerText="Statement Id">#{s.statementId}</prime:column>
-							<prime:column id="statement" headerText="Statement">#{s.statementText}</prime:column>
-							<prime:column id="sprior" headerText="Priority">#{s.priority}</prime:column>
-							<prime:column id="sretry" headerText="Retry">#{s.retry}</prime:column>
-							<prime:column id="screateBy" headerText="Create By">#{s.createBy}</prime:column>
-							<prime:column id="screateDate" headerText="Create Date">
-								<h:outputText value="#{s.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('sId')}"
-							update="sId"></prime:commandButton>
-					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showNotifMColl}">
-						<prime:dataTable value="#{batchViewHandler.mCollNotifBatchList}"
-							var="mcoll" id="mcollId" rowKey="#{mcoll.id}" paginator="true"
-							rows="10">
-							<prime:column id="facilityNo" headerText="Facility No">#{mcoll.facilityNo}</prime:column>
-							<prime:column id="customerName" headerText="Customer Name">#{mcoll.customerName}</prime:column>
-							<prime:column id="activity" headerText="Activity">#{mcoll.activity}</prime:column>
-							<prime:column id="activityDate" headerText="Activity Date">
-								<h:outputText value="#{mcoll.activityDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-							<prime:column id="description" headerText="Description">#{mcoll.description}</prime:column>
-							<prime:column id="mcprior" headerText="Priority">#{mcoll.priority}</prime:column>
-							<prime:column id="mcretry" headerText="Retry">#{mcoll.retry}</prime:column>
-							<prime:column id="mccreateBy" headerText="Create By">#{mcoll.createBy}</prime:column>
-							<prime:column id="mcreateDate" headerText="Create Date">
-								<h:outputText value="#{mcoll.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-						</prime:dataTable>
-						<prime:commandButton value="Refresh"
-							actionListener="#{batchViewHandler.refreshBatchInfo('mcollId')}"
-							update="mcollId"></prime:commandButton>
-					</b:panel>
-					<b:panel rendered="#{batchViewHandler.showNotifMPos}">
-						<prime:dataTable value="#{batchViewHandler.mPosNotifBatchList}"
-							var="mpos" id="mposId" rowKey="#{mpos.id}" paginator="true"
-							rows="10">
-							<prime:column id="userId" headerText="User Id">#{mpos.fidUser}</prime:column>
-							<prime:column id="parameter" headerText="Parameter">#{mpos.parameter}</prime:column>
-							<prime:column id="text" headerText="Text">#{mpos.text}</prime:column>
-							<prime:column id="title" headerText="Title">
-								<h:outputText value="#{mpos.title}" />
-							</prime:column>
-							<prime:column id="actionType" headerText="Action Type">#{mpos.actionType}</prime:column>
-							<prime:column id="mpprior" headerText="Priority">#{mpos.priority}</prime:column>
-							<prime:column id="mpretry" headerText="Retry">#{mpos.retry}</prime:column>
-							<prime:column id="mpcreateBy" headerText="Create By">#{mpos.createBy}</prime:column>
-							<prime:column id="mpreateDate" headerText="Create Date">
-								<h:outputText value="#{mpos.createDate}">
-									<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" />
-								</h:outputText>
-							</prime:column>
-						</prime:dataTable>
-						<prime:commandButton value="Update Column"
-							actionListener="#{batchViewHandler.refreshBatchInfo('mposId')}"
-							update="mposId"></prime:commandButton>
-					</b:panel> -->
 				</b:column>
 			</b:row>
-<!-- 			<prime:blockUI block="formID" trigger="treeBatch" /> -->
 			<prime:blockUI block="formID" trigger="treeBatch, refreshWaPool, refreshWaSend, refWaOtp" >
         LOADING<br />
 				<prime:graphicImage name="demo/images/ajaxloadingbar.gif" />

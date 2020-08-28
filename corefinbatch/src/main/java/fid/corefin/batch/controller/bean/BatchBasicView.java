@@ -31,10 +31,21 @@ public class BatchBasicView implements Serializable {
 	public void init() {
 		root = new DefaultTreeNode("Root", null);
 		TreeNode all = new DefaultTreeNode("Corefin Batch", root);
+		TreeNode waMonitoring = new DefaultTreeNode("WA Message Monitoring", all);
+		TreeNode journalMonitoring = new DefaultTreeNode("Journal Monitoring", all);
+		TreeNode mobileMonitoring = new DefaultTreeNode("Mobile Monitoring", all);
+		
 		List<String> batchNames = batchOption.getBatchNames();
 		for (String batchName : batchNames) {
 			if (batchName != null && batchName.length() > 0) {
-				TreeNode b = new DefaultTreeNode(batchName, all);
+				if(batchName.contains("WA")) {
+					new DefaultTreeNode(batchName, waMonitoring);
+				} else if(batchName.contains("Journal")) {
+					new DefaultTreeNode(batchName, journalMonitoring);
+				} else if(batchName.contains("Mobile")) {
+					new DefaultTreeNode(batchName, mobileMonitoring);
+				}
+				//TreeNode b = new DefaultTreeNode(batchName, all);
 				
 //				List<String> types = dynamicOptions.getTypesToBrand(brand);
 //				for (String type : types) {
